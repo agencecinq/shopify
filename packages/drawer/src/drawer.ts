@@ -17,7 +17,6 @@ export class Drawer extends HTMLElement {
     this.trap = this;
   }
 
-  // Équivalent de Piece.cid
   get cid(): string | null {
     return this.getAttribute('cid') || this.id;
   }
@@ -48,7 +47,6 @@ export class Drawer extends HTMLElement {
    * Handles the key up event for the drawer component.
    */
   handleKeyUp = (event: KeyboardEvent): void => {
-    // Utilisation de event.key (plus moderne) ou de votre constante ESCAPE
     const key = event.which || event.keyCode;
 
     if (key === keycode.ESCAPE && this.hasAttribute('open')) {
@@ -136,7 +134,6 @@ export class Drawer extends HTMLElement {
     this.addEventListener(
       'transitionend',
       () => {
-        // On ne cache que si l'attribut est toujours absent (évite les bugs si on ré-ouvre vite)
         if (!this.hasAttribute('open')) {
           this.style.setProperty('opacity', '0');
           this.style.setProperty('visibility', 'hidden');
@@ -145,7 +142,7 @@ export class Drawer extends HTMLElement {
             detail: { drawer: this.cid }
           }));
           
-          enableScroll(); // J'ai retiré le 'false' sauf si votre utilitaire scroll l'exige
+          enableScroll(false);
         }
       },
       { once: true },
@@ -153,12 +150,12 @@ export class Drawer extends HTMLElement {
   }
 
   disconnectedCallback(): void {
-    // Nettoyage des listeners
     const $overlay = this.querySelector('[data-dom="overlay"]') || this.querySelector('[overlay]');
     
     if ($overlay) {
       $overlay.removeEventListener('click', this.handleClick);
     }
+
     document.documentElement.removeEventListener('keyup', this.handleKeyUp);
     document.documentElement.removeEventListener(EVENTS.DRAWER_OPEN, this.handleDrawerOpen as EventListener);
   }

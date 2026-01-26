@@ -8,7 +8,6 @@ export class DrawerButton extends HTMLElement {
     super();
   }
 
-  // Équivalent de mount()
   connectedCallback() {
     // Remplacement de this.domAttr('button')
     this.$button = this.querySelector('[data-button]') || this.querySelector('button');
@@ -67,7 +66,6 @@ export class DrawerButton extends HTMLElement {
     }
   }
 
-  // Équivalent de unmount()
   disconnectedCallback() {
     this.$button!.removeEventListener('click', this.handleClick);
     document.documentElement.removeEventListener(EVENTS.DRAWER_CLOSE, this.handleDrawerClose as EventListener);
