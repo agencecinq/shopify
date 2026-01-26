@@ -15,7 +15,7 @@ Before starting, ensure you have the following installed:
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/CINQ/shopify.git
+git clone https://github.com/agencecinq/shopify.git
 cd shopify
 
 ```
@@ -61,7 +61,6 @@ Turbo caches successful builds. If no code has changed, the build will finish in
 ```bash
 pnpm typecheck
 pnpm lint
-
 ```
 
 ---
@@ -76,7 +75,6 @@ When your feature or fix is ready, run:
 
 ```bash
 pnpm change
-
 ```
 
 * Select the packages that were modified (e.g., `drawer`).
@@ -89,7 +87,6 @@ Before releasing, generate the changelogs and update versions:
 
 ```bash
 pnpm version-packages
-
 ```
 
 ### 3. Release to NPM
@@ -98,7 +95,6 @@ To build and publish the packages to the `@agencecinq` scope:
 
 ```bash
 pnpm release
-
 ```
 
 ---
