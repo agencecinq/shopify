@@ -1,5 +1,5 @@
 {
-  "name": "@agencecinq/shopify",
+  "name": "agencecinq-shopify",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -11,12 +11,5 @@
   "devDependencies": {
     "turbo": "latest"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "packageManager": "yarn@4.12.0",
-  "dependencies": {
-    "@changesets/cli": "^2.29.8"
-  }
+  "packageManager": "pnpm@10.28.1"
 }

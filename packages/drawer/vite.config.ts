@@ -1,25 +1,36 @@
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts'; 
-import shopifyLiquid from './vite-plugin-shopify-liquid';
-import path from 'path';
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
+import { resolve } from "path";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: './src/index.ts',
-      name: 'Drawer',
-      fileName: 'index',
-      formats: ['es']
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        plugin: resolve(__dirname, 'src/plugin.ts')
+      },
+      formats: ['es'],
+      fileName: (format, entryName) => `${entryName}.js`
     },
     rollupOptions: {
-      external: ['@agencecinq/utils']
-    }
+      external: [
+        "@agencecinq/utils",
+        "vite",
+        "fs-extra",
+        "path",
+        "node:path",
+        "node:fs",
+      ],
+      output: {
+        globals: {
+          vite: 'Vite',
+          'fs-extra': 'fsExtra',
+          path: 'path'
+        }
+      }
+    },
   },
-    plugins: [
-        dts(),
-        shopifyLiquid({
-      // Chemin vers votre thème Shopify local
-      themeRoot: path.resolve(__dirname, '../../../votre-theme-shopify')
-    })
-    ]
+  plugins: [
+    dts(),
+  ],
 });

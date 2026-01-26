@@ -106,15 +106,18 @@
         logContainer.prepend(entry);
       };
 
-      // Écoute de l'événement de toggle
       document.documentElement.addEventListener(EVENTS.DRAWER_OPEN, e => {
         addLog("DRAWER_OPEN", e.detail);
       });
 
-      // Optionnel : Écouter l'ouverture externe
       document.documentElement.addEventListener(EVENTS.DRAWER_CLOSE, e => {
         addLog("DRAWER_CLOSE", e.detail);
       });
+      
+      document.documentElement.addEventListener(EVENTS.DRAWER_TOGGLE, e => {
+        addLog("DRAWER_TOGGLE", e.detail);
+      });
+
     </script>
   </body>
 </html>

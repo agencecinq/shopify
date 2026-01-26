@@ -26,7 +26,7 @@ export class DrawerButton extends HTMLElement {
     document.documentElement.addEventListener(EVENTS.DRAWER_OPEN, this.handleDrawerOpen as EventListener);
   }
 
-  // Logique métier inchangée
+
   handleClick = () => {
     this.$button!.setAttribute(
       'aria-expanded',
@@ -34,8 +34,6 @@ export class DrawerButton extends HTMLElement {
     );
 
     this.controls.forEach((control) => {
-      // Remplacement de this.call par un dispatch d'événement
-      // La logique reste identique : on informe les tiroirs de basculer
       const detail = { 
         trigger: this.$button, 
         trap: document.getElementById(`${this.$button?.getAttribute('data-trap')}`),
@@ -64,7 +62,6 @@ export class DrawerButton extends HTMLElement {
    * @param event - The custom event containing the drawer information.
    */
   handleDrawerOpen = (event: CustomEvent<{ drawer: string }>) => {
-    // On ignore si le détail contient l'id qu'on contrôle (pour ne pas se fermer soi-même)
     if (this.$button && !this.controls.includes(event.detail.drawer)) {
       this.$button.setAttribute('aria-expanded', 'false');
     }

@@ -30,6 +30,6 @@ const breakpoints = {
   '3xl': window.matchMedia('(min-width: 1920px)'),
 };
 
-const production = 'production' === process.env.NODE_ENV;
+const production = import.meta.env.PROD;
 
 export { html, body, isDebug, scroll, mouse, breakpoints, production };

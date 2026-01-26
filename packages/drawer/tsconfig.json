@@ -5,9 +5,22 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@agencecinq/utils": ["../utils/src/index.ts"]
+      "@agencecinq/utils": [
+        "../utils/src/index.ts"
+      ]
     }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "references": [
+    {
+      "path": "../utils"
+    }
+  ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "moduleResolution": "bundler"
 }
