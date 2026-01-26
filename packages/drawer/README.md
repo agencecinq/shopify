@@ -14,7 +14,7 @@ A high-performance, accessible, and lightweight Web Component for creating Drawe
 ## Installation
 
 ```bash
-pnpm add @agencecinq/drawer @agencecinq/utils
+pnpm add @agencecinq/drawer
 
 ```
 
@@ -35,7 +35,6 @@ export default defineConfig({
     cinqDrawerPlugin()
   ]
 });
-
 ```
 
 ### 2. Import the Component
@@ -44,7 +43,6 @@ In your main JavaScript entry point (e.g., `theme.ts` or `main.js`):
 
 ```javascript
 import '@agencecinq/drawer';
-
 ```
 
 ### 3. Implementation in Liquid
@@ -63,7 +61,6 @@ Once the plugin has copied the snippet, you can render it in your layout or sect
     View Cart
   </button>
 </cinq-drawer-button>
-
 ```
 
 ---
@@ -87,7 +84,6 @@ const $drawer = document.querySelector('cinq-drawer#cart-drawer');
 $drawer.open();
 $drawer.close();
 $drawer.toggle();
-
 ```
 
 ### Events
@@ -108,21 +104,18 @@ If you are working inside the CINQ monorepo:
 1. **Build the package**:
 ```bash
 pnpm build
-
 ```
 
 
 2. **Add a version change**:
 ```bash
 pnpm change
-
 ```
 
 
 3. **Publish to NPM**:
 ```bash
 pnpm release
-
 ```
 
 
