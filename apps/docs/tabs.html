@@ -288,6 +288,107 @@
 
       <section class="mb-10">
         <div class="bg-white rounded-xl shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Exemple RTL (right-to-left)</h2>
+
+          <pre
+            class="p-4 rounded-lg bg-gray-900 text-gray-100 text-xs overflow-x-auto"
+          ><code class="language-html">&lt;div dir="rtl"&gt;
+  &lt;cinq-tabs data-tabs-hash="false"&gt;
+    ...
+  &lt;/cinq-tabs&gt;
+&lt;/div&gt;</code></pre>
+          <p class="text-xs text-gray-500">
+            &mdash; en plaçant <code class="language-html">dir="rtl"</code> sur un
+            conteneur, la navigation au clavier suit le sens de lecture
+            right‑to‑left : Flèche gauche = “suivant”, Flèche droite = “précédent”.
+          </p>
+
+          <div dir="rtl">
+            <cinq-tabs class="block mt-3" data-tabs-hash="false">
+              <nav
+                class="inline-flex gap-2 rounded-lg bg-gray-100 p-1"
+                role="tablist"
+                aria-label="Exemple RTL"
+              >
+                <button
+                  type="button"
+                  class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="rtl-home-tab"
+                  id="rtl-home"
+                >
+                  Accueil
+                </button>
+                <button
+                  type="button"
+                  class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="rtl-profile-tab"
+                  id="rtl-profile"
+                  tabindex="-1"
+                >
+                  Profil
+                </button>
+                <button
+                  type="button"
+                  class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="rtl-settings-tab"
+                  id="rtl-settings"
+                  tabindex="-1"
+                >
+                  Réglages
+                </button>
+              </nav>
+
+              <div class="tab-content mt-4 space-y-3">
+                <section
+                  class="is-active [&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                  tabindex="0"
+                  role="tabpanel"
+                  aria-labelledby="rtl-home"
+                  id="rtl-home-tab"
+                >
+                  <p class="mb-0">
+                    Exemple de navigation RTL : utilise les flèches gauche/droite
+                    pour changer d’onglet, dans le sens right‑to‑left.
+                  </p>
+                </section>
+                <section
+                  class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                  tabindex="0"
+                  role="tabpanel"
+                  aria-labelledby="rtl-profile"
+                  id="rtl-profile-tab"
+                  hidden
+                >
+                  <p class="mb-0">
+                    Panneau “Profil” dans un contexte d’interface RTL.
+                  </p>
+                </section>
+                <section
+                  class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                  tabindex="0"
+                  role="tabpanel"
+                  aria-labelledby="rtl-settings"
+                  id="rtl-settings-tab"
+                  hidden
+                >
+                  <p class="mb-0">
+                    Panneau “Réglages” dans un contexte d’interface RTL.
+                  </p>
+                </section>
+              </div>
+            </cinq-tabs>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <div class="bg-white rounded-xl shadow p-6 space-y-4">
           <h2 class="text-lg font-semibold">Ajout dynamique d’onglets</h2>
           <p class="text-xs text-gray-500">
             Exemple de destruction/re-création complète pour tester la

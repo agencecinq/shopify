@@ -1,5 +1,12 @@
 # docs
 
+## 3.4.0
+
+### Minor Changes
+
+- 3134ada: Update dependencies
+- rtl example
+
 ## 3.3.0
 
 ### Minor Changes
