@@ -9,7 +9,6 @@ export class DrawerButton extends HTMLElement {
   }
 
   connectedCallback() {
-    // Remplacement de this.domAttr('button')
     this.$button = this.querySelector('[data-button]') || this.querySelector('button');
 
     if (!this.$button) {
