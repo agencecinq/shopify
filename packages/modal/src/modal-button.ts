@@ -4,10 +4,13 @@ export class ModalButton extends HTMLElement {
     private $button: HTMLButtonElement | null = null;
     controls: string[] = [];
     private handleModalClose = () => this.$button?.setAttribute('aria-pressed', 'false');
+    private handleModalOpen = (event: CustomEvent) => {
+        const { modal } = event.detail;
 
-    constructor() {
-        super();
-    }
+        if (this.$button && this.controls.includes(modal)) {
+            this.$button.setAttribute('aria-pressed', 'true');
+        }
+    };
 
     connectedCallback() {
         this.$button = this.querySelector('[data-button]') || this.querySelector('button');
@@ -19,7 +22,8 @@ export class ModalButton extends HTMLElement {
         this.controls = this.$button.getAttribute('aria-controls')?.trim().split(' ') || [];
 
         this.$button.addEventListener('click', this.show);
-        document.documentElement.addEventListener(EVENTS.MODAL_CLOSE, this.handleModalClose);
+        document.documentElement.addEventListener(EVENTS.MODAL_CLOSE, this.handleModalClose as EventListener);
+        document.documentElement.addEventListener(EVENTS.MODAL_OPEN, this.handleModalOpen as EventListener);
     }
 
     disconnectedCallback() {
@@ -27,6 +31,7 @@ export class ModalButton extends HTMLElement {
             this.$button.removeEventListener('click', this.show);
         }
         document.documentElement.removeEventListener(EVENTS.MODAL_CLOSE, this.handleModalClose as EventListener);
+        document.documentElement.removeEventListener(EVENTS.MODAL_OPEN, this.handleModalOpen as EventListener);
         this.$button = null;
         this.controls = [];
     }

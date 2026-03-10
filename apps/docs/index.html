@@ -190,32 +190,6 @@
 
       document.documentElement.addEventListener(EVENTS.MODAL_TOGGLE, e => {
         addLog("MODAL_TOGGLE", e.detail);
-
-        const modalId = e.detail?.modal;
-        if (!modalId) return;
-
-        const $modal =
-          document.querySelector(`cinq-modal#${modalId}`) ||
-          document.getElementById(modalId);
-        if (!$modal) return;
-
-        const dialog =
-          $modal.querySelector?.("dialog") ||
-          ($modal instanceof HTMLDialogElement ? $modal : null);
-        const isOpen =
-          dialog instanceof HTMLDialogElement ? dialog.open : false;
-
-        if (
-          typeof $modal.close === "function" &&
-          typeof $modal.show === "function"
-        ) {
-          isOpen ? $modal.close() : $modal.show();
-          return;
-        }
-
-        if (dialog instanceof HTMLDialogElement) {
-          isOpen ? dialog.close() : dialog.showModal();
-        }
       });
     </script>
   </body>

@@ -1,1 +1,1 @@
-{"version":3,"file":"modal.d.ts","sourceRoot":"","sources":["../src/modal.ts"],"names":[],"mappings":"AAEA,qBAAa,KAAM,SAAQ,WAAW;IAClC,OAAO,CAAC,MAAM,CAAkC;IAChD,OAAO,CAAC,WAAW,CAEjB;;IAMF,iBAAiB;IAWjB,oBAAoB;IAQpB,KAAK,aAOH;IAEF,IAAI,aAOF;CACL"}
+{"version":3,"file":"modal.d.ts","sourceRoot":"","sources":["../src/modal.ts"],"names":[],"mappings":"AAEA,qBAAa,KAAM,SAAQ,WAAW;IAClC,OAAO,CAAC,MAAM,CAAkC;IAChD,OAAO,CAAC,WAAW,CAEjB;IACF,OAAO,CAAC,iBAAiB,CAYvB;;IAMF,iBAAiB;IAYjB,oBAAoB;IASpB,KAAK,aAOH;IAEF,IAAI,aAWF;CACL"}

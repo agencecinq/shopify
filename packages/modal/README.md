@@ -31,6 +31,7 @@ import "@agencecinq/modal";
 ### 2. Implementation in Liquid / HTML
 
 Render the markup and wire buttons with `aria-controls`.
+`cinq-modal` must have an `id`, because it toggles itself when `detail.modal` matches its `id`.
 
 ```liquid
 <cinq-modal-button>
@@ -53,6 +54,7 @@ Render the markup and wire buttons with `aria-controls`.
 ### Markup
 
 `<cinq-modal>` must contain a `<dialog>` (or an element marked with `[data-dialog]`).
+An `id` is required if you want it to react to `modal-toggle` events from `cinq-modal-button`.
 
 ```html
 <cinq-modal id="my-modal">
@@ -78,7 +80,7 @@ Event names come from `@agencecinq/utils`:
 | Event          | Emitted by          | Payload (`event.detail`)                                                   | Description                                                                                                                              |
 | -------------- | ------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `modal-toggle` | `cinq-modal-button` | `{ modal: string; trigger: HTMLButtonElement; trap: HTMLElement \| null }` | Requests toggling a modal identified by the button `aria-controls`. One event is dispatched **per id** (space-separated list supported). |
-| `modal-open`   | `cinq-modal`        | `undefined`                                                                | Dispatched after calling `show()`.                                                                                                       |
+| `modal-open`   | `cinq-modal`        | `{ modal: string }`                                                       | Dispatched after calling `show()`. Contains the modal `id` so buttons can sync their `aria-pressed` state.                              |
 | `modal-close`  | `cinq-modal`        | `undefined`                                                                | Dispatched after calling `close()`.                                                                                                      |
 
 ### Wiring: handle `modal-toggle`
@@ -89,35 +91,7 @@ Event names come from `@agencecinq/utils`:
 - `detail.trigger`: the button element
 - `detail.trap`: optional element id from `data-trap` (if you use it)
 
-Minimal wiring example:
-
-```js
-import { EVENTS } from "@agencecinq/utils";
-
-document.documentElement.addEventListener(EVENTS.MODAL_TOGGLE, e => {
-  const modalId = e.detail?.modal;
-  if (!modalId) return;
-
-  const $modal =
-    document.getElementById(modalId) ||
-    document.querySelector(`cinq-modal#${modalId}`);
-  if (!$modal) return;
-
-  const dialog =
-    $modal.querySelector?.("dialog") ||
-    ($modal instanceof HTMLDialogElement ? $modal : null);
-  const isOpen = dialog instanceof HTMLDialogElement ? dialog.open : false;
-
-  if (typeof $modal.close === "function" && typeof $modal.show === "function") {
-    isOpen ? $modal.close() : $modal.show();
-    return;
-  }
-
-  if (dialog instanceof HTMLDialogElement) {
-    isOpen ? dialog.close() : dialog.showModal();
-  }
-});
-```
+`cinq-modal` listens to `modal-toggle` by default and toggles itself when `detail.modal` matches its `id` (so `id` is required for event-driven open/close).
 
 > Note: `cinq-modal-button` sets `aria-pressed="true"` on click and resets it to `false` on **any** `EVENTS.MODAL_CLOSE` event (it does not filter by modal id).
 

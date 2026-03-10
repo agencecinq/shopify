@@ -156,9 +156,12 @@ customElements.get("cinq-drawer") || customElements.define("cinq-drawer", v);
 class A extends HTMLElement {
   controls = [];
   $button = null;
-  constructor() {
-    super();
-  }
+  handleDrawerClose = (e) => {
+    this.$button && this.controls.includes(e.detail.drawer) && this.$button.setAttribute("aria-expanded", "false");
+  };
+  handleDrawerOpen = (e) => {
+    this.$button && this.controls.includes(e.detail.drawer) && this.$button.setAttribute("aria-expanded", "true");
+  };
   connectedCallback() {
     if (this.$button = this.querySelector("[data-button]") || this.querySelector("button"), !this.$button)
       throw new Error("DrawerButton: button element not found");
@@ -176,22 +179,6 @@ class A extends HTMLElement {
       };
       document.documentElement.dispatchEvent(new CustomEvent(r.DRAWER_TOGGLE, { detail: n }));
     });
-  };
-  /**
-   * Handles the drawer close event.
-   *
-   * @param event - The custom event containing the drawer information.
-   */
-  handleDrawerClose = (e) => {
-    this.$button && this.controls.includes(e.detail.drawer) && this.$button.setAttribute("aria-expanded", "false");
-  };
-  /**
-   * Handles the drawer open event.
-   *
-   * @param event - The custom event containing the drawer information.
-   */
-  handleDrawerOpen = (e) => {
-    this.$button && !this.controls.includes(e.detail.drawer) && this.$button.setAttribute("aria-expanded", "false");
   };
   disconnectedCallback() {
     this.$button.removeEventListener("click", this.handleClick), document.documentElement.removeEventListener(r.DRAWER_CLOSE, this.handleDrawerClose), document.documentElement.removeEventListener(r.DRAWER_OPEN, this.handleDrawerOpen);

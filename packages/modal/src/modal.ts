@@ -5,6 +5,19 @@ export class Modal extends HTMLElement {
     private handleClick = (event: MouseEvent) => {
         if (event.target === event.currentTarget) this.close();
     };
+    private handleModalToggle = (event: CustomEvent) => {
+        const { modal } = event.detail;
+
+        if (modal !== this.id) {
+            return;
+        }
+
+        if (this.$modal?.open) {
+            this.close();
+        } else {
+            this.show();
+        }
+    };
 
     constructor() {
         super();
@@ -19,12 +32,14 @@ export class Modal extends HTMLElement {
         }
 
         this.$modal.addEventListener('click', this.handleClick);
+        document.documentElement.addEventListener(EVENTS.MODAL_TOGGLE, this.handleModalToggle as EventListener);
     }
 
     disconnectedCallback() {
         if (this.$modal) {
             this.$modal.removeEventListener('click', this.handleClick);
         }
+        document.documentElement.removeEventListener(EVENTS.MODAL_TOGGLE, this.handleModalToggle as EventListener);
 
         this.$modal = null;
     }
@@ -44,7 +59,11 @@ export class Modal extends HTMLElement {
         }
 
         this.$modal.showModal();
-        document.documentElement.dispatchEvent(new CustomEvent(EVENTS.MODAL_OPEN));
+        document.documentElement.dispatchEvent(
+            new CustomEvent(EVENTS.MODAL_OPEN, {
+                detail: { modal: this.id },
+            }),
+        );
     };
 }
 

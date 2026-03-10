@@ -1,5 +1,11 @@
 # @agencecinq/drawer
 
+## 4.1.0
+
+### Minor Changes
+
+- Refacto
+
 ## 4.0.0
 
 ### Major Changes

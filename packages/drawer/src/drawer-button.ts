@@ -4,8 +4,17 @@ export class DrawerButton extends HTMLElement {
   controls: string[] = [];
   $button: HTMLButtonElement | null = null;
 
-  constructor() {
-    super();
+  private handleDrawerClose = (event: CustomEvent<{ drawer: string }>) => {
+    // console.log(event.detail.drawer, this.controls);
+    if (this.$button && this.controls.includes(event.detail.drawer)) {
+      this.$button.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  private handleDrawerOpen = (event: CustomEvent<{ drawer: string }>) => {
+    if (this.$button && this.controls.includes(event.detail.drawer)) {
+      this.$button.setAttribute('aria-expanded', 'true');
+    }
   }
 
   connectedCallback() {
@@ -40,29 +49,6 @@ export class DrawerButton extends HTMLElement {
 
       document.documentElement.dispatchEvent(new CustomEvent(EVENTS.DRAWER_TOGGLE, { detail }));
     });
-  }
-
-  /**
-   * Handles the drawer close event.
-   *
-   * @param event - The custom event containing the drawer information.
-   */
-  handleDrawerClose = (event: CustomEvent<{ drawer: string }>) => {
-    // console.log(event.detail.drawer, this.controls);
-    if (this.$button && this.controls.includes(event.detail.drawer)) {
-      this.$button.setAttribute('aria-expanded', 'false');
-    }
-  }
-
-  /**
-   * Handles the drawer open event.
-   *
-   * @param event - The custom event containing the drawer information.
-   */
-  handleDrawerOpen = (event: CustomEvent<{ drawer: string }>) => {
-    if (this.$button && !this.controls.includes(event.detail.drawer)) {
-      this.$button.setAttribute('aria-expanded', 'false');
-    }
   }
 
   disconnectedCallback() {

@@ -1,5 +1,17 @@
 # docs
 
+## 3.1.0
+
+### Minor Changes
+
+- Refacto
+
+## 3.0.1
+
+### Patch Changes
+
+- Update event system
+
 ## 3.0.0
 
 ### Major Changes

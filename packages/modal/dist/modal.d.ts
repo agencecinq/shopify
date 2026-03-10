@@ -1,6 +1,7 @@
 export declare class Modal extends HTMLElement {
     private $modal;
     private handleClick;
+    private handleModalToggle;
     constructor();
     connectedCallback(): void;
     disconnectedCallback(): void;
