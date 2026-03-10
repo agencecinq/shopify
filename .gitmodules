@@ -1,0 +1,3 @@
+[submodule "packages/tabs"]
+	path = packages/tabs
+	url = https://github.com/agencecinq/tabs.git
