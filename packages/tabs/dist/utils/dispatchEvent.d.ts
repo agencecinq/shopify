@@ -1,9 +1,7 @@
-/**
- * Dispatch event
- *
- * @param {HTMLElement} target
- * @param {object} details
- * @param {string} name
- */
-export default function dispatchEvent(target: HTMLElement, details?: object, name?: string): boolean;
+import { Events } from './events';
+export type Details = {
+    controls: string;
+    element: HTMLElement;
+};
+export default function dispatchEvent(target: HTMLElement, details: Details, name: Events): boolean;
 //# sourceMappingURL=dispatchEvent.d.ts.map

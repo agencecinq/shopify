@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CINQ - Démo Tabs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <div class="fixed top-4 right-4 z-50 space-y-2 js-alert"></div>
+
+    <div class="max-w-4xl mx-auto py-20 px-6">
+      <header class="mb-10 flex items-center justify-between">
+        <a href="index.html" class="text-sm text-gray-500 hover:text-gray-900"
+          >&larr; Retour à la documentation</a
+        >
+        <span class="text-xs uppercase tracking-wide text-gray-400">Tabs</span>
+      </header>
+
+      <section class="mb-10">
+        <h1 class="text-3xl font-bold mb-4">Démo Tabs</h1>
+        <p class="text-sm text-gray-600 mb-4">
+          Exemples avancés pour tester le composant
+          <code
+            class="language-html px-1 py-0.5 bg-gray-800 text-gray-100 rounded text-xs"
+            >&lt;cinq-tabs&gt;</code
+          >
+          : sélection manuelle/automatique, hash, ajout/suppression, onglets
+          imbriqués, etc.
+        </p>
+        <pre
+          class="p-4 rounded-lg bg-gray-900 text-gray-100 text-xs overflow-x-auto"
+        ><code class="language-javascript">import '@agencecinq/tabs';
+// Use &lt;cinq-tabs data-tabs-hash="true"&gt; in HTML; no init() needed.</code></pre>
+      </section>
+
+      <section class="mb-10">
+        <div class="bg-white rounded-xl shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Sélection manuelle (sans hash)</h2>
+
+          <pre
+            class="p-4 rounded-lg bg-gray-900 text-gray-100 text-xs overflow-x-auto"
+          ><code class="language-javascript">&lt;cinq-tabs data-tabs-hash="false" data-tabs-delay="false"&gt;
+&lt;/cinq-tabs&gt;</code></pre>
+          <p class="text-xs text-gray-500">
+            &mdash; les flèches changent seulement le focus, l’activation se
+            fait au clic ou via Espace/Entrée.
+          </p>
+          <cinq-tabs class="block mt-3" data-tabs-hash="false">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <button
+                class="js-destroy px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800"
+                type="button"
+              >
+                Destroy
+              </button>
+              <button
+                class="js-create px-3 py-1.5 text-xs font-medium rounded-lg bg-black text-white hover:bg-gray-800"
+                type="button"
+              >
+                Create
+              </button>
+            </div>
+            <nav
+              class="inline-flex gap-2 rounded-lg bg-gray-100 p-1"
+              role="tablist"
+              aria-label="Exemple d'onglets sans hash"
+            >
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="barracuda-tab"
+                id="barracuda"
+              >
+                Barracuda
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="dracolich-tab"
+                id="dracolich"
+                tabindex="-1"
+              >
+                Dracolich
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="contact-tab"
+                id="contact"
+                tabindex="-1"
+                data-deletable="true"
+              >
+                Deletable!
+              </button>
+            </nav>
+            <div class="tab-content mt-4 space-y-3">
+              <section
+                class="is-active [&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="barracuda"
+                id="barracuda-tab"
+              >
+                <p class="mb-0">
+                  The first clue that a barracuda is in the area might be a
+                  sudden pain in the foot, as the marauder swims by and bites
+                  off a few tender toes. They are found in warm salt waters.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="dracolich"
+                id="dracolich-tab"
+                hidden
+              >
+                <p>
+                  The dracolich is an undead creature resulting from the
+                  unnatural transformation of an evil dragon. The mysterious
+                  Cult of the Dragon practices the powerful magic necessary for
+                  the creation of the dracolich, though other practitioners are
+                  also rumored to exist.
+                </p>
+                <p class="mb-0">
+                  A dracolich can be created from any of the evil dragon
+                  subspecies. A dracolich retains the physical appearance of its
+                  original body, except that its eyes appear as glowing points
+                  of light floating in shadowy eye sockets.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="contact"
+                id="contact-tab"
+                hidden
+              >
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                  Sequi id doloribus soluta minima nulla nemo rerum, eveniet
+                  dolorem earum!
+                </p>
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex,
+                  quia, sunt.
+                </p>
+              </section>
+            </div>
+          </cinq-tabs>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <div class="bg-white rounded-xl shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Sélection automatique + hash</h2>
+
+          <pre
+            class="p-4 rounded-lg bg-gray-900 text-gray-100 text-xs overflow-x-auto"
+          ><code class="language-javascript">&lt;cinq-tabs data-tabs-hash="true" data-tabs-delay="300"&gt;
+&lt;/cinq-tabs&gt;</code></pre>
+          <p class="text-xs text-gray-500">
+            &mdash; les flèches activent automatiquement l’onglet et mettent à
+            jour le hash.
+          </p>
+          <cinq-tabs
+            class="block mt-3"
+            data-tabs-hash="true"
+            data-tabs-delay="300"
+          >
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <button
+                class="js-destroy px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800"
+                type="button"
+              >
+                Destroy
+              </button>
+              <button
+                class="js-create px-3 py-1.5 text-xs font-medium rounded-lg bg-black text-white hover:bg-gray-800"
+                type="button"
+              >
+                Create
+              </button>
+            </div>
+            <nav
+              class="inline-flex gap-2 rounded-lg bg-gray-100 p-1"
+              role="tablist"
+              aria-label="Exemple d'onglets avec hash"
+            >
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="ant-giant-tab"
+                id="ant"
+              >
+                Ant, giant
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="ettercap-tab"
+                id="ettercap"
+                tabindex="-1"
+              >
+                Ettercap
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="cloaker-tab"
+                id="cloaker"
+                tabindex="-1"
+              >
+                Cloaker
+              </button>
+            </nav>
+            <div class="tab-content mt-4 space-y-3">
+              <section
+                class="is-active [&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="ant-giant"
+                id="ant-giant-tab"
+              >
+                <p class="mb-0">
+                  Both worker and warrior ants fight. If a warrior manages to
+                  bite, it also tries to sting for 3d4 points damage.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="ettercap"
+                id="ettercap-tab"
+                hidden
+              >
+                <p>
+                  Ettercaps are ugly bipedal creatures that get along very well
+                  with all types of giant spiders.
+                </p>
+                <p class="mb-0">
+                  Ettercaps do not have a formal language. They express
+                  themselves through a combination of highpitched chittering
+                  noises, shrieks, and violent actions.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="cloaker"
+                id="cloaker-tab"
+                hidden
+              >
+                <p>
+                  Cloakers are fiendish horrors, related to trappers, that dwell
+                  in dark places far beneath the surface of the earth.
+                </p>
+                <p class="mb-0">
+                  When it unfurls itself and moves to attack, however, its true
+                  nature becomes all too obvious.
+                </p>
+              </section>
+            </div>
+          </cinq-tabs>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <div class="bg-white rounded-xl shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Ajout dynamique d’onglets</h2>
+          <p class="text-xs text-gray-500">
+            Exemple de destruction/re-création complète pour tester la
+            robustesse du composant.
+          </p>
+          <cinq-tabs class="block mt-3">
+            <div
+              class="mb-4 space-y-3 rounded-lg border border-dashed border-gray-300 p-4"
+            >
+              <div class="space-y-2">
+                <input
+                  class="js-input w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  type="text"
+                  placeholder="ID de l’onglet (ex: foo)"
+                  name="add"
+                />
+                <textarea
+                  placeholder="Contenu du panneau"
+                  class="js-textarea w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                  name="content"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <button
+                  class="js-add px-3 py-1.5 text-xs font-medium rounded-lg bg-black text-white hover:bg-gray-800"
+                  type="button"
+                >
+                  Add
+                </button>
+                <button
+                  class="js-destroy px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800"
+                  type="button"
+                >
+                  Destroy
+                </button>
+                <button
+                  class="js-create px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800"
+                  type="button"
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+
+            <nav
+              class="inline-flex gap-2 rounded-lg bg-gray-100 p-1 js-tab-list"
+              role="tablist"
+              aria-label="Ajout d’onglets"
+            >
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="galeb-duhr-tab"
+                id="galeb-duhr"
+              >
+                Galeb Duhr
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="troll-tab"
+                id="troll"
+                tabindex="-1"
+              >
+                Troll
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="jermlaine-tab"
+                id="jermlaine"
+                tabindex="-1"
+              >
+                Jermlaine
+              </button>
+            </nav>
+
+            <div class="tab-content js-tab-content mt-4 space-y-3">
+              <section
+                class="is-active [&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="galeb-duhr"
+                id="galeb-duhr-tab"
+              >
+                <p>
+                  The galeb duhr is a curious boulder-like creature with
+                  appendages that act as hands and feet.
+                </p>
+                <p class="mb-0">
+                  A typical galeb duhr is from 8 to 12 feet tall.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="troll"
+                id="troll-tab"
+                hidden
+              >
+                <p class="mb-0">
+                  Trolls are horrid carnivores found in all climes, from arctic
+                  wastelands to tropical jungles.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="jermlaine"
+                id="jermlaine-tab"
+                hidden
+              >
+                <p class="mb-0">
+                  Jermlaine are a diminutive humanoid race that dwells in
+                  tunnels and ambushes hapless adventurers.
+                </p>
+              </section>
+            </div>
+          </cinq-tabs>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <div class="bg-white rounded-xl shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Onglets imbriqués</h2>
+          <p class="text-xs text-gray-500">
+            Un cas de tabs dans des tabs pour valider le scoping des sélecteurs.
+          </p>
+          <cinq-tabs class="block mt-3">
+            <nav
+              class="inline-flex gap-2 rounded-lg bg-gray-100 p-1 js-tab-list"
+              role="tablist"
+              aria-label="Tabs imbriqués"
+            >
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="nested-tab"
+                id="nested"
+              >
+                Nested
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="golem-plush-tab"
+                id="golem-plush"
+                tabindex="-1"
+              >
+                Golem, Plush
+              </button>
+              <button
+                type="button"
+                class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                role="tab"
+                aria-selected="false"
+                aria-controls="kyton-tab"
+                id="kyton"
+                tabindex="-1"
+              >
+                Kyton
+              </button>
+            </nav>
+
+            <div class="tab-content js-tab-content mt-4 space-y-3">
+              <section
+                class="is-active rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="nested"
+                id="nested-tab"
+              >
+                <cinq-tabs class="block">
+                  <ul
+                    class="mt-3 inline-flex gap-2 rounded-lg bg-gray-100 p-1 js-tab-list"
+                    role="tablist"
+                    aria-label="Nested inner tabs"
+                  >
+                    <li class="nav-item">
+                      <button
+                        type="button"
+                        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md is-active"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="adherer-tab"
+                        id="adherer"
+                      >
+                        Adherer
+                      </button>
+                    </li>
+                    <li class="nav-item">
+                      <button
+                        type="button"
+                        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="crimbil-tab"
+                        id="crimbil"
+                        tabindex="-1"
+                      >
+                        Crimbil
+                      </button>
+                    </li>
+                    <li class="nav-item">
+                      <button
+                        type="button"
+                        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="frost-salamander-tab"
+                        id="frost-salamander"
+                        tabindex="-1"
+                      >
+                        Jermlaine
+                      </button>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content js-tab-content mt-4 space-y-3">
+                    <section
+                      class="is-active [&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                      tabindex="0"
+                      role="tabpanel"
+                      aria-labelledby="adherer"
+                      id="adherer-tab"
+                    >
+                      <p>
+                        At first glance the adherer seems like a mummy, with
+                        folds of off-white skin resembling filthy bandages.
+                      </p>
+                    </section>
+                    <section
+                      class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                      tabindex="0"
+                      role="tabpanel"
+                      aria-labelledby="crimbil"
+                      id="crimbil-tab"
+                      hidden
+                    >
+                      <p class="mb-0">
+                        The malicious crimbils are rumored to be a corrupted
+                        bloodline of wood gnomes.
+                      </p>
+                    </section>
+                    <section
+                      class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                      tabindex="0"
+                      role="tabpanel"
+                      aria-labelledby="frost-salamander"
+                      id="frost-salamander-tab"
+                      hidden
+                    >
+                      <p>
+                        Frost salamanders, natives of the Paraelemental Plane of
+                        Ice, thrive in very cold places.
+                      </p>
+                    </section>
+                  </div>
+                </cinq-tabs>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="golem-plush"
+                id="golem-plush-tab"
+                hidden
+              >
+                <p class="mb-0">
+                  Plush golems are every parents nightmare. They are typically
+                  given as gifts to young children.
+                </p>
+              </section>
+              <section
+                class="[&.is-active]:block hidden rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+                tabindex="0"
+                role="tabpanel"
+                aria-labelledby="kyton"
+                id="kyton-tab"
+                hidden
+              >
+                <p>
+                  Kytons are a race of creatures inhabiting the city of Jangling
+                  Hiter on the third layer of Baator.
+                </p>
+              </section>
+            </div>
+          </cinq-tabs>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script type="module">
+      import "../../packages/tabs/src/index.ts";
+
+      const elements = [...document.querySelectorAll("cinq-tabs")];
+
+      const alert = content => {
+        const div = document.createElement("div");
+        div.className =
+          "rounded-lg bg-black text-white text-xs px-3 py-2 shadow-lg cursor-pointer transition opacity-90 hover:opacity-100";
+        div.innerHTML = content;
+        return div;
+      };
+
+      const $alert = document.querySelector(".js-alert");
+
+      const onChange = content => {
+        if (!$alert) return;
+        const $el = alert(content);
+        $alert.appendChild($el);
+        $el.addEventListener("click", () => $el.remove(), false);
+        setTimeout(() => $el.parentNode && $el.remove(), 2000);
+      };
+
+      elements.forEach(tabsEl => {
+        const $destroy = tabsEl.querySelector(".js-destroy");
+        const $create = tabsEl.querySelector(".js-create");
+        const $list = tabsEl.querySelector(".js-tab-list");
+        const $content = tabsEl.querySelector(".js-tab-content");
+        const $add = tabsEl.querySelector(".js-add");
+        const $input = tabsEl.querySelector(".js-input");
+        const $textarea = tabsEl.querySelector(".js-textarea");
+
+        $destroy?.addEventListener("click", () => tabsEl.destroy());
+        $create?.addEventListener("click", () => tabsEl.init());
+
+        tabsEl.addEventListener("tab-activate", ({ detail }) => {
+          onChange(`<strong>${detail.controls}</strong> has been activated!`);
+        });
+
+        tabsEl.addEventListener("tab-delete", ({ detail }) => {
+          onChange(`<strong>${detail.controls}</strong> has been deleted!`);
+        });
+
+        $add?.addEventListener("click", () => {
+          const tab = $input?.value?.trim();
+          const panel = $textarea?.value?.trim();
+
+          if (!tab || !panel || !$list || !$content) return;
+
+          tabsEl.destroy();
+
+          $list.insertAdjacentHTML(
+            "beforeend",
+            `<button
+						type="button"
+						class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-200 px-3 py-1.5 text-sm font-medium rounded-md"
+						role="tab"
+						aria-selected="false"
+						aria-controls="${tab}-tab"
+						id="${tab}"
+						tabindex="-1"
+					>${tab}</button>`,
+          );
+
+          $content.insertAdjacentHTML(
+            "beforeend",
+            `<section
+						class="rounded-lg bg-white border border-gray-200 p-4 text-sm text-gray-700"
+						tabindex="0"
+						role="tabpanel"
+						aria-labelledby="${tab}"
+						id="${tab}-tab"
+						hidden
+					>
+						<p class="mb-0">${panel}</p>
+					</section>`,
+          );
+
+          tabsEl.init();
+        });
+      });
+    </script>
+  </body>
+</html>

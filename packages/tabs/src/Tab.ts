@@ -1,21 +1,22 @@
-import { Callback } from './index';
 import dispatchEvent from './utils/dispatchEvent';
+import { EVENTS } from './utils/events';
 
 export default class Tab {
 	el: HTMLElement;
 	active: boolean = false;
 	id: string = '';
-	callback: Callback;
+	index: number;
 	controls: string;
 
-	constructor(el: HTMLElement, callback: Callback) {
+	constructor(el: HTMLElement, index: number) {
 		this.el = el;
+		this.index = index;
 		this.id = el.id;
 
 		this.controls = el.getAttribute('aria-controls')?.trim().split(' ')[0] || '';
 
-		this.active = JSON.parse(el.getAttribute('aria-selected') as string);
-		this.callback = callback;
+		const selected = el.getAttribute('aria-selected');
+		this.active = selected === 'true';
 	}
 
 	init = () => this.initEvents();
@@ -32,14 +33,20 @@ export default class Tab {
 	 *
 	 * @param {boolean} focus
 	 */
-	async toggle(focus: boolean = true): Promise<void> {
+	toggle(focus: boolean = true): void {
 		if (this.active) {
 			return;
 		}
 
-		await this.callback();
+		const beforeActivate = new CustomEvent(EVENTS.BEFORE_ACTIVATE, {
+			bubbles: true,
+			cancelable: true,
+			detail: { index: this.index, controls: this.controls, element: this.el },
+		});
+		this.el.dispatchEvent(beforeActivate);
+		if (beforeActivate.defaultPrevented) return;
 
-		dispatchEvent(this.el, { controls: this.controls, element: this.el }, 'activate');
+		dispatchEvent(this.el, { controls: this.controls, element: this.el }, EVENTS.ACTIVATE);
 		this.activate(focus);
 	}
 
@@ -91,7 +98,7 @@ export default class Tab {
 	 * @return void
 	 */
 	delete = () => {
-		dispatchEvent(this.el, { controls: this.controls, element: this.el }, 'delete');
+		dispatchEvent(this.el, { controls: this.controls, element: this.el }, EVENTS.DELETE);
 		this.el.parentElement?.removeChild(this.el);
 	}
 

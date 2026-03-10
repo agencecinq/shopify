@@ -1,19 +1,8 @@
 import getHash from './utils/getHash';
-import { hash, delay } from './config';
+import { hash, delay as defaultDelay } from './config';
 import TabPanel from './TabPanel';
 import Tab from './Tab';
-
-export type Callback = () => void;
-
-interface Options {
-  callback?: Callback;
-  delay: number;
-}
-
-const optionsDefault: Options = {
-  delay,
-  callback() { },
-};
+import { EVENTS } from './utils/events';
 
 export class Tabs extends HTMLElement {
   $tabList: HTMLElement | null;
@@ -21,22 +10,51 @@ export class Tabs extends HTMLElement {
   tabPanels: TabPanel[] = [];
   tabs: Tab[] = [];
   href = '';
-  options: Options;
   hash = hash;
+  delay = defaultDelay;
+
+  private setActiveTab(index: number) {
+    this.current = index;
+
+    this.deactivateTabs();
+    this.deactivateTabPanels();
+
+    const tab = this.tabs[index];
+    const panel = this.tabPanels.find((tabPanel) => tabPanel.id === tab.controls);
+    panel?.activate();
+
+    if (this.hash) {
+      this.href = tab.id;
+      window.location.hash = tab.id;
+    }
+  }
+
+  /** Call after preventing `tab-before-activate` to complete activation (e.g. after async work). */
+  activateTab(index: number): void {
+    this.setActiveTab(index);
+    this.tabs[index]?.activate(false);
+  }
 
   constructor() {
     super();
     this.$tabList = null;
-    this.options = optionsDefault;
   }
 
   connectedCallback() {
     this.$tabList = this.querySelector('[role="tablist"]') as HTMLElement | null;
 
     const hash = this.getAttribute('data-tabs-hash');
+    const delayAttr = this.getAttribute('data-tabs-delay');
+
     this.hash = hash === null ? this.hash : hash !== 'false' && hash !== '0';
 
+    if (delayAttr !== null) {
+      const parsed = parseInt(delayAttr, 10);
+      this.delay = Number.isNaN(parsed) ? 0 : parsed;
+    }
+
     this.href = (this.hash && getHash(window.location.hash)) || '';
+
     this.init();
   }
 
@@ -48,7 +66,7 @@ export class Tabs extends HTMLElement {
     if (!this.$tabList) return;
 
     this.tabs = [...this.$tabList.querySelectorAll('[role="tab"]')].map(
-      ($element) => new Tab($element as HTMLElement, this.options.callback as Callback),
+      ($element, index) => new Tab($element as HTMLElement, index),
     );
 
     this.tabs.forEach((tab, index) => {
@@ -57,27 +75,11 @@ export class Tabs extends HTMLElement {
       );
       tab.init();
 
-      tab.el.addEventListener('Tab.activate', () => {
-        this.current = index;
-
-        this.deactivateTabs();
-        this.deactivateTabPanels();
-        // @ts-ignore
-        this.tabPanels.find((tabPanel) => tabPanel.id === tab.controls).activate();
-
-        if (this.hash) {
-          this.href = tab.id;
-          window.location.hash = tab.id;
-        }
-      });
+      tab.el.addEventListener(EVENTS.ACTIVATE, () => this.setActiveTab(index));
 
       if (tab.active || tab.id === this.href || this.current === index) {
-        this.deactivateTabs();
-        this.deactivateTabPanels();
-
+        this.setActiveTab(index);
         tab.activate(false);
-        // @ts-ignore
-        this.tabPanels.find((tabPanel) => tabPanel.id === tab.controls).activate();
       }
     });
 
@@ -86,6 +88,11 @@ export class Tabs extends HTMLElement {
 
   initEvents() {
     this.$tabList?.addEventListener('keydown', this.handleKeydown);
+  }
+
+  private get isRtl(): boolean {
+    const el = this.$tabList ?? this;
+    return el ? getComputedStyle(el).direction === 'rtl' : false;
   }
 
   handleKeydown = (event: KeyboardEvent) => {
@@ -99,10 +106,10 @@ export class Tabs extends HTMLElement {
       this.current = 0 > this.current - 1 ? this.tabs.length - 1 : this.current - 1;
       this.tabs[this.current].focus();
 
-      if (this.options.delay) {
+      if (this.delay) {
         setTimeout(() => {
           this.tabs[this.current].toggle(false);
-        }, this.options.delay);
+        }, this.delay);
       }
     };
 
@@ -110,10 +117,10 @@ export class Tabs extends HTMLElement {
       this.current = this.current + 1 > this.tabs.length - 1 ? 0 : this.current + 1;
       this.tabs[this.current].focus();
 
-      if (this.options.delay) {
+      if (this.delay) {
         setTimeout(() => {
           this.tabs[this.current].toggle(false);
-        }, this.options.delay);
+        }, this.delay);
       }
     };
 
@@ -129,11 +136,13 @@ export class Tabs extends HTMLElement {
       this.tabs[this.current].toggle();
     };
 
+    const rtl = this.isRtl;
+
     const codes: Record<string, () => void | boolean> = {
       ArrowUp: previous,
-      ArrowLeft: previous,
       ArrowDown: next,
-      ArrowRight: next,
+      ArrowLeft: rtl ? next : previous,
+      ArrowRight: rtl ? previous : next,
       End: last,
       Home: first,
       PageUp: first,

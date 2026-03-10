@@ -1,4 +1,4 @@
-const hash = true;
+const hash = false;
 const delay = 0;
 
 export { hash, delay };

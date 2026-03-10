@@ -1,35 +1,35 @@
 {
-	"name": "@agencecinq/tabs",
-	"version": "9.0.0",
-	"description": "Tabs",
-	"type": "module",
-	"files": [
-		"dist"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/19h47/19h47-tabs.git"
-	},
-	"license": "ISC",
-	"author": "Jérémy Levron <jeremylevron@19h47.fr> (https://19h47.fr)",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
-		}
-	},
-	"main": "./dist/index.js",
-	"module": "./dist/index.js",
-	"scripts": {
-		"deploy": "npm login && npm run build && npm publish",
-		"dev": "vite",
-		"build": "vite build"
-	},
+  "name": "@agencecinq/tabs",
+  "version": "9.1.0",
+  "description": "Accessible, WAI-ARIA compliant tabs as a lightweight Web Component.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agencecinq/shopify.git",
+    "directory": "packages/tabs"
+  },
+  "license": "ISC",
+  "author": "Jérémy Levron <jeremy@agencecinq.com> (https://agencecinq.com)",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
   "publishConfig": {
     "access": "public"
   },
-	"devDependencies": {
-		"vite": "^7.3.1",
-		"vite-plugin-dts": "^4.5.4"
-	}
+  "devDependencies": {
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4"
+  }
 }

@@ -1,5 +1,11 @@
 # docs
 
+## 3.3.0
+
+### Minor Changes
+
+- Update @agencecinq/tabs
+
 ## 3.2.0
 
 ### Minor Changes

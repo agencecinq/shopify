@@ -1,23 +1,22 @@
-import { Callback } from './index';
 export default class Tab {
     el: HTMLElement;
     active: boolean;
     id: string;
-    callback: Callback;
+    index: number;
     controls: string;
-    constructor(el: HTMLElement, callback: Callback);
+    constructor(el: HTMLElement, index: number);
     init: () => void;
     initEvents: () => void;
     /**
      * Handle click
      */
-    handleClick: () => Promise<void>;
+    handleClick: () => void;
     /**
      * Toggle
      *
      * @param {boolean} focus
      */
-    toggle(focus?: boolean): Promise<void>;
+    toggle(focus?: boolean): void;
     /**
      * Activate tab
      *
