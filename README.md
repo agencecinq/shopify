@@ -43,7 +43,6 @@ pnpm dev
 
 ```
 
-Turbo will intelligently run all dev scripts. Thanks to our configuration, local changes in `@agencecinq/utils` will be reflected in `@agencecinq/drawer` automatically.
 Turbo will intelligently run all dev scripts. Thanks to our configuration, local changes in `@agencecinq/utils` will be reflected in `@agencecinq/drawer` and `@agencecinq/modal` automatically.
 
 ### Building
