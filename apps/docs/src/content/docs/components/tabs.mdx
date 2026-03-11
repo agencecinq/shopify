@@ -3,7 +3,10 @@ title: Tabs
 description: Accessible tabs Web Component (`<cinq-tabs>`) with hash + delay options.
 ---
 
-import RegisterComponents from '../_components/RegisterComponents.astro';
+import RegisterComponents from "../_components/RegisterComponents.astro";
+import TabsDestroyCreate from "../_components/TabsDestroyCreate.astro";
+import TabsAddRuntime from "../_components/TabsAddRuntime.astro";
+import TabsAsyncMonsters from "../_components/TabsAsyncMonsters.astro";
 
 ## Install
 
@@ -16,7 +19,7 @@ pnpm add @agencecinq/tabs
 Import once:
 
 ```js
-import '@agencecinq/tabs';
+import "@agencecinq/tabs";
 ```
 
 Then write the WAI‑ARIA markup:
@@ -24,16 +27,42 @@ Then write the WAI‑ARIA markup:
 ```html
 <cinq-tabs data-tabs-hash="false" data-tabs-delay="0">
   <div role="tablist" aria-label="Example tabs">
-    <button id="tab-home" role="tab" aria-selected="true" aria-controls="panel-home">
+    <button
+      id="tab-home"
+      role="tab"
+      aria-selected="true"
+      aria-controls="panel-home"
+    >
       Home
     </button>
-    <button id="tab-project" role="tab" aria-selected="false" aria-controls="panel-project" tabindex="-1">
+    <button
+      id="tab-project"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-project"
+      tabindex="-1"
+    >
       Project
     </button>
   </div>
 
-  <section id="panel-home" role="tabpanel" aria-labelledby="tab-home" tabindex="0">…</section>
-  <section id="panel-project" role="tabpanel" aria-labelledby="tab-project" tabindex="0" hidden>…</section>
+  <section
+    id="panel-home"
+    role="tabpanel"
+    aria-labelledby="tab-home"
+    tabindex="0"
+  >
+    …
+  </section>
+  <section
+    id="panel-project"
+    role="tabpanel"
+    aria-labelledby="tab-project"
+    tabindex="0"
+    hidden
+  >
+    …
+  </section>
 </cinq-tabs>
 ```
 
@@ -41,20 +70,259 @@ Then write the WAI‑ARIA markup:
 
 Configure via data attributes:
 
-- **`data-tabs-hash`**: `true` (default) / `false` — sync the active tab id to `location.hash` on activation.
-- **`data-tabs-delay`**: number (ms), default `0` — when `> 0`, arrow key navigation activates after a delay.
+| Attribute         | Type          | Default | Description                                                                       |
+| ----------------- | ------------- | ------- | --------------------------------------------------------------------------------- |
+| `data-tabs-hash`  | `true/false`  | `true`  | Sync the active tab id to `location.hash` on activation.                          |
+| `data-tabs-delay` | `number (ms)` | `0`     | When `> 0`, arrow key navigation activates the focused tab after the given delay. |
 
 ## API
 
-### Method
+### Methods
 
-- **`activateTab(index: number)`**: activates a tab programmatically (useful after canceling `tab-before-activate`).
+| Method                       | Description                                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| `activateTab(index: number)` | Activates a tab programmatically (useful after canceling `tab-before-activate`). |
 
 ### Events
 
-- **`tab-before-activate`** (cancelable): `detail: { index, controls, element }`
-- **`tab-activate`**: `detail: { controls, element }`
-- **`tab-delete`**: `detail: { controls, element }`
+| Event                 | Cancelable | Detail payload                 | Description                                                         |
+| --------------------- | ---------- | ------------------------------ | ------------------------------------------------------------------- |
+| `tab-before-activate` | Yes        | `{ index, controls, element }` | Fired before activation; call `event.preventDefault()` to override. |
+| `tab-activate`        | No         | `{ controls, element }`        | Fired when a tab has been activated.                                |
+| `tab-delete`          | No         | `{ controls, element }`        | Fired when a deletable tab has been removed.                        |
+
+## Examples
+
+### Automatic activation (`data-tabs-delay`)
+
+When `data-tabs-delay` is greater than `0`, moving focus with arrow keys will automatically activate the tab after the given delay (in ms):
+
+```html
+<cinq-tabs data-tabs-hash="true" data-tabs-delay="300">
+  <div role="tablist" aria-label="Monster tabs">
+    <button
+      id="tab-troll"
+      role="tab"
+      aria-selected="true"
+      aria-controls="panel-troll"
+    >
+      Troll
+    </button>
+    <button
+      id="tab-dracolich"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-dracolich"
+      tabindex="-1"
+    >
+      Dracolich
+    </button>
+  </div>
+
+  <section
+    id="panel-troll"
+    role="tabpanel"
+    aria-labelledby="tab-troll"
+    tabindex="0"
+  >
+    …
+  </section>
+  <section
+    id="panel-dracolich"
+    role="tabpanel"
+    aria-labelledby="tab-dracolich"
+    tabindex="0"
+    hidden
+  >
+    …
+  </section>
+</cinq-tabs>
+```
+
+#### Example
+
+Below, `data-tabs-delay="300"` means that when you move focus with Left/Right arrows, the tab will auto‑activate after 300 ms:
+
+<div class="not-content mt-6">
+  <cinq-tabs
+    class="block flex flex-col gap-4"
+    data-tabs-hash="true"
+    data-tabs-delay="300"
+  >
+    <div
+      role="tablist"
+      aria-label="Monster tabs (auto activation)"
+      class="inline-flex gap-2 rounded-lg bg-white p-1 shadow-sm"
+    >
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="true"
+        aria-controls="auto-troll-panel"
+        id="auto-troll"
+      >
+        Troll
+      </button>
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="false"
+        aria-controls="auto-dracolich-panel"
+        id="auto-dracolich"
+        tabindex="-1"
+      >
+        Dracolich
+      </button>
+    </div>
+
+    <section
+      tabindex="0"
+      role="tabpanel"
+      aria-labelledby="auto-troll"
+      id="auto-troll-panel"
+      class="rounded-xl bg-white p-4 shadow"
+    >
+      <p class="text-gray-700">
+        Trolls regenerate quickly; automatic activation makes cycling through their stats fast with
+        only the arrow keys.
+      </p>
+    </section>
+    <section
+      tabindex="0"
+      role="tabpanel"
+      aria-labelledby="auto-dracolich"
+      id="auto-dracolich-panel"
+      class="rounded-xl bg-white p-4 shadow"
+      hidden
+    >
+      <p class="text-gray-700">
+        The dracolich panel becomes active after a short delay once focus moves to its tab.
+      </p>
+    </section>
+
+  </cinq-tabs>
+</div>
+
+### Async loading with `tab-before-activate`
+
+```js
+const tabsEl = document.querySelector("cinq-tabs");
+
+tabsEl.addEventListener("tab-before-activate", event => {
+  const { index, controls } = event.detail;
+
+  // Cancel the built-in activation
+  event.preventDefault();
+
+  // Simulate async work (fetch data, animate, etc.)
+  fetch(`/api/panels/${controls}`)
+    .then(response => response.json())
+    .then(() => {
+      // When ready, activate the tab programmatically
+      tabsEl.activateTab(index);
+    });
+});
+```
+
+#### Example
+
+The live demo below wires `tab-before-activate` to the public D&D 5e monsters API and only activates the tab once the monster data has been fetched and rendered:
+
+<TabsAsyncMonsters />
+
+### Destroy & recreate a `<cinq-tabs>` instance
+
+```js
+const tabsEl = document.querySelector("cinq-tabs.js-tabs");
+const destroyBtn = document.querySelector(".js-tabs-destroy");
+const createBtn = document.querySelector(".js-tabs-create");
+
+destroyBtn?.addEventListener("click", () => {
+  tabsEl.destroy();
+});
+
+createBtn?.addEventListener("click", () => {
+  tabsEl.init();
+});
+```
+
+#### Example
+
+<TabsDestroyCreate />
+
+### Add tabs at runtime
+
+```js
+const tabsEl = document.querySelector("cinq-tabs.js-tabs-add");
+const list = tabsEl.querySelector('[role="tablist"]');
+const panels = tabsEl.querySelector("[data-tab-panels]");
+const addBtn = document.querySelector(".js-tabs-add");
+const labelInput = document.querySelector(".js-tabs-label");
+const contentInput = document.querySelector(".js-tabs-content");
+
+addBtn?.addEventListener("click", () => {
+  const label = labelInput.value.trim();
+  const content = contentInput.value.trim();
+  if (!label || !content) return;
+
+  const id = label.toLowerCase().replace(/\s+/g, "-");
+
+  tabsEl.destroy();
+
+  list.insertAdjacentHTML(
+    "beforeend",
+    `<button
+      type="button"
+      role="tab"
+      aria-selected="false"
+      aria-controls="${id}-panel"
+      id="${id}"
+      tabindex="-1"
+    >
+      ${label}
+    </button>`,
+  );
+
+  panels.insertAdjacentHTML(
+    "beforeend",
+    `<section
+      tabindex="0"
+      role="tabpanel"
+      aria-labelledby="${id}"
+      id="${id}-panel"
+      hidden
+    >
+      ${content}
+    </section>`,
+  );
+
+  tabsEl.init();
+});
+```
+
+#### Example
+
+<TabsAddRuntime />
+
+### Listening to `tab-activate` and `tab-delete`
+
+```js
+const tabsEl = document.querySelector("cinq-tabs");
+
+tabsEl.querySelectorAll('[role="tab"]').forEach(tab => {
+  tab.addEventListener("tab-activate", ({ detail }) => {
+    const { controls, element } = detail;
+    console.log("Activated tab:", controls, element);
+  });
+
+  tab.addEventListener("tab-delete", ({ detail }) => {
+    const { controls, element } = detail;
+    console.log("Deleted tab:", controls, element);
+  });
+});
+```
 
 ## Interactive example
 
@@ -131,7 +399,196 @@ Configure via data attributes:
     >
       <p class="text-gray-700">A galeb duhr looks like a boulder until it moves.</p>
     </section>
+
   </cinq-tabs>
+</div>
+
+### Hash syncing
+
+When `data-tabs-hash="true"`, activating a tab updates `location.hash` with the tab id. Reloading the page with that hash will restore the active tab:
+
+<div class="not-content mt-6">
+  <cinq-tabs
+    class="block flex flex-col gap-4"
+    data-tabs-hash="true"
+    data-tabs-delay="0"
+  >
+    <div
+      role="tablist"
+      aria-label="Monster tabs (hash)"
+      class="inline-flex gap-2 rounded-lg bg-white p-1 shadow-sm"
+    >
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="true"
+        aria-controls="hash-galeb-panel"
+        id="hash-galeb"
+      >
+        Galeb duhr
+      </button>
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="false"
+        aria-controls="hash-cloaker-panel"
+        id="hash-cloaker"
+        tabindex="-1"
+      >
+        Cloaker
+      </button>
+    </div>
+
+    <section
+      tabindex="0"
+      role="tabpanel"
+      aria-labelledby="hash-galeb"
+      id="hash-galeb-panel"
+      class="rounded-xl bg-white p-4 shadow"
+    >
+      <p class="text-gray-700">
+        The galeb duhr looks like a boulder until it moves; its tab id
+        <code>#hash-galeb</code> is reflected in the URL when active.
+      </p>
+    </section>
+    <section
+      tabindex="0"
+      role="tabpanel"
+      aria-labelledby="hash-cloaker"
+      id="hash-cloaker-panel"
+      class="rounded-xl bg-white p-4 shadow"
+      hidden
+    >
+      <p class="text-gray-700">
+        Cloakers lurk like ordinary cloaks until they unfold; activating this tab sets
+        <code>#hash-cloaker</code> in the address bar.
+      </p>
+    </section>
+
+  </cinq-tabs>
+</div>
+
+## Nested tabs
+
+You can safely nest `<cinq-tabs>` as long as each tablist / panel group is scoped within its own component.
+
+<div class="not-content">
+  <div class="flex flex-col gap-8">
+    <cinq-tabs class="block flex flex-col gap-4" data-tabs-hash="false" data-tabs-delay="0">
+      <div
+        role="tablist"
+        aria-label="Outer tabs"
+        class="inline-flex gap-2 rounded-lg bg-white p-1 shadow-sm"
+      >
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="true"
+          aria-controls="outer-nested-panel"
+          id="outer-nested"
+        >
+          Nested
+        </button>
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="false"
+          aria-controls="outer-other-panel"
+          id="outer-other"
+          tabindex="-1"
+        >
+          Golem, Plush
+        </button>
+      </div>
+
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="outer-nested"
+        id="outer-nested-panel"
+        class="rounded-xl bg-white p-4 shadow flex flex-col gap-4"
+      >
+        <p class="text-gray-700 text-sm">
+          Inner tabs are fully independent: keyboard navigation and ARIA state are scoped to each
+          `cinq-tabs` instance.
+        </p>
+
+        <cinq-tabs class="block flex flex-col gap-3" data-tabs-hash="false" data-tabs-delay="0">
+          <div
+            role="tablist"
+            aria-label="Inner tabs"
+            class="inline-flex gap-2 rounded-lg bg-gray-50 p-1"
+          >
+            <button
+              type="button"
+              class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-xs font-medium rounded-md"
+              role="tab"
+              aria-selected="true"
+              aria-controls="inner-adherer-panel"
+              id="inner-adherer"
+            >
+              Adherer
+            </button>
+            <button
+              type="button"
+              class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-xs font-medium rounded-md"
+              role="tab"
+              aria-selected="false"
+              aria-controls="inner-crimbil-panel"
+              id="inner-crimbil"
+              tabindex="-1"
+            >
+              Crimbil
+            </button>
+          </div>
+
+          <section
+            tabindex="0"
+            role="tabpanel"
+            aria-labelledby="inner-adherer"
+            id="inner-adherer-panel"
+            class="rounded-lg bg-gray-50 p-3"
+          >
+            <p class="text-gray-700 text-sm">
+              The adherer looks like a mummy, with folds of off-white skin resembling filthy
+              bandages.
+            </p>
+          </section>
+          <section
+            tabindex="0"
+            role="tabpanel"
+            aria-labelledby="inner-crimbil"
+            id="inner-crimbil-panel"
+            class="rounded-lg bg-gray-50 p-3"
+            hidden
+          >
+            <p class="text-gray-700 text-sm">
+              Crimbils are malicious fey rumored to be a corrupted bloodline of wood gnomes.
+            </p>
+          </section>
+        </cinq-tabs>
+      </section>
+
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="outer-other"
+        id="outer-other-panel"
+        class="rounded-xl bg-white p-4 shadow"
+        hidden
+      >
+        <p class="text-gray-700">
+          Plush golems are every parent’s nightmare; they start as toys and quickly become
+          full-fledged family members.
+        </p>
+      </section>
+    </cinq-tabs>
+
+  </div>
 </div>
 
 ### RTL

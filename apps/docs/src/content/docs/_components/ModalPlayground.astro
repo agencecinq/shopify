@@ -1,0 +1,196 @@
+<div class="not-content">
+  <div class="flex flex-col gap-10">
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Confirm dialog</h3>
+            <p class="text-sm text-gray-600">
+              A simple confirm/cancel flow using multiple <code>&lt;cinq-modal-button&gt;</code> tied
+              to the same modal.
+            </p>
+          </div>
+          <cinq-modal-button class="block shrink-0">
+            <button
+              type="button"
+              class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 shrink-0"
+              aria-controls="confirm-modal"
+              aria-pressed="false"
+            >
+              Open confirm
+            </button>
+          </cinq-modal-button>
+        </div>
+
+        <p
+          class="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-800"
+          data-modal-status="confirm"
+        >
+          Waiting for your choice…
+        </p>
+
+        <cinq-modal id="confirm-modal">
+          <dialog
+            class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl backdrop:bg-black/50 text-gray-900"
+            data-modal="confirm"
+          >
+            <h2 class="text-xl font-semibold mb-2">Spend a spell slot?</h2>
+            <p class="text-gray-800 mb-4">
+              Casting <span class="font-semibold">fireball</span> will consume a 3rd-level spell slot for
+              your wizard this encounter.
+            </p>
+
+            <div class="flex justify-end gap-2">
+              <cinq-modal-button class="block">
+                <button
+                  type="button"
+                  class="px-3 py-2 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200"
+                  aria-controls="confirm-modal"
+                  aria-pressed="false"
+                  data-action="cancel"
+                >
+                  Cancel
+                </button>
+              </cinq-modal-button>
+              <cinq-modal-button class="block">
+                <button
+                  type="button"
+                  class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+                  aria-controls="confirm-modal"
+                  aria-pressed="false"
+                  data-action="confirm"
+                >
+                  Confirm
+                </button>
+              </cinq-modal-button>
+            </div>
+          </dialog>
+        </cinq-modal>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Inline form</h3>
+            <p class="text-sm text-gray-600">
+              A small form inside the modal — the dialog closes on submit and shows the result
+              outside.
+            </p>
+          </div>
+          <cinq-modal-button class="block shrink-0">
+            <button
+              type="button"
+              class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 shrink-0"
+              aria-controls="character-modal"
+              aria-pressed="false"
+            >
+              Edit character
+            </button>
+          </cinq-modal-button>
+        </div>
+
+        <p
+          class="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-800"
+          data-modal-status="character"
+        >
+          No character saved yet.
+        </p>
+
+        <cinq-modal id="character-modal">
+          <dialog
+            class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl backdrop:bg-black/50 text-gray-900"
+            data-modal="character"
+          >
+            <form class="flex flex-col gap-4" data-character-form>
+              <div>
+                <h2 class="text-xl font-semibold mb-2">Character sheet</h2>
+                <p class="text-gray-800 text-sm">
+                  Enter a name and class for your adventurer.
+                </p>
+              </div>
+
+              <label class="block">
+                <span class="block text-sm font-medium text-gray-700 mb-1">Name</span>
+                <input
+                  name="name"
+                  required
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  placeholder="Mialee"
+                />
+              </label>
+
+              <label class="block">
+                <span class="block text-sm font-medium text-gray-700 mb-1">Class</span>
+                <input
+                  name="class"
+                  required
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  placeholder="Wizard"
+                />
+              </label>
+
+              <div class="flex justify-end gap-2">
+                <cinq-modal-button class="block">
+                  <button
+                    type="button"
+                    class="px-3 py-2 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    aria-controls="character-modal"
+                    aria-pressed="false"
+                  >
+                    Cancel
+                  </button>
+                </cinq-modal-button>
+
+                <button
+                  type="submit"
+                  class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </cinq-modal>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // Confirm modal status
+  {
+    const root = document.querySelector('[data-modal="confirm"]')?.closest('section');
+    const status = document.querySelector('[data-modal-status="confirm"]');
+    if (root && status) {
+      root.querySelector('[data-action="confirm"]')?.addEventListener('click', () => {
+        status.textContent = 'You confirmed the spell — the fireball leaves your hand.';
+      });
+      root.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+        status.textContent = 'You cancel the spell and keep your slot for later.';
+      });
+    }
+  }
+
+  // Character form modal
+  {
+    const dialog = document.querySelector('[data-modal="character"]') as HTMLDialogElement | null;
+    const form = dialog?.querySelector('[data-character-form]') as HTMLFormElement | null;
+    const status = document.querySelector('[data-modal-status="character"]');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const name = (formData.get('name') || '').toString();
+      const klass = (formData.get('class') || '').toString();
+
+      if (name && klass) {
+        status && (status.textContent = `${name} the ${klass} is ready for adventure.`);
+      }
+
+      dialog?.close();
+    });
+  }
+</script>
+

@@ -1,0 +1,103 @@
+---
+import PortalToBody from "./PortalToBody.astro";
+---
+
+<div class="not-content">
+  <section class="rounded-2xl bg-white p-6 shadow flex flex-col gap-4">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Cart drawer</h3>
+        <p class="text-sm text-gray-600">
+          A slide-in cart sidebar: overlay, scroll lock, and a simple list of AD&amp;D‑style items.
+        </p>
+      </div>
+      <cinq-drawer-button class="block">
+        <button
+          class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+          aria-controls="cart-drawer-demo"
+          aria-expanded="false"
+        >
+          Open cart
+        </button>
+      </cinq-drawer-button>
+    </div>
+
+    <div
+      class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-800"
+    >
+      <span>Items in cart</span>
+      <span class="font-semibold" data-cart-count>3 monsters</span>
+    </div>
+
+    <cinq-drawer cid="cart-drawer-demo" class="group">
+      <div
+        data-dom="overlay"
+        class="fixed inset-0 z-[2147483646] bg-black/50 opacity-0 pointer-events-none transition-opacity group-[[open]]:opacity-100 group-[[open]]:pointer-events-auto"
+      ></div>
+      <div
+        role="dialog"
+        class="fixed right-0 top-0 z-[2147483647] h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-300 group-[[open]]:translate-x-0"
+      >
+        <div class="flex h-full flex-col">
+          <header class="flex items-center justify-between border-b px-6 py-4">
+            <h2 class="text-lg font-semibold text-gray-900">Cart</h2>
+            <cinq-drawer-button class="block">
+              <button
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black/20"
+                aria-controls="cart-drawer-demo"
+                aria-expanded="false"
+              >
+                ✕
+              </button>
+            </cinq-drawer-button>
+          </header>
+
+          <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3" data-cart-list>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-medium text-gray-900">Troll</p>
+                <p class="text-xs text-gray-600">
+                  Regenerates quickly; best handled with fire or acid.
+                </p>
+              </div>
+              <span class="text-sm text-gray-700 whitespace-nowrap tabular-nums">120 gp</span>
+            </div>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-medium text-gray-900">Dracolich skull</p>
+                <p class="text-xs text-gray-600">
+                  A trophy from an undead dragon; radiates faint necromancy.
+                </p>
+              </div>
+              <span class="text-sm text-gray-700 whitespace-nowrap tabular-nums">2 500 gp</span>
+            </div>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-medium text-gray-900">Galeb duhr statuette</p>
+                <p class="text-xs text-gray-600">
+                  Looks like a boulder, watches like a sentry.
+                </p>
+              </div>
+              <span class="text-sm text-gray-700 whitespace-nowrap tabular-nums">350 gp</span>
+            </div>
+          </div>
+
+          <footer class="border-t px-6 py-4 flex items-center justify-between gap-3">
+            <div class="text-sm text-gray-700">
+              Total: <span class="font-semibold" data-cart-total>2 970 gp</span>
+            </div>
+            <button
+              type="button"
+              class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 text-sm"
+            >
+              Checkout
+            </button>
+          </footer>
+        </div>
+      </div>
+    </cinq-drawer>
+
+    <PortalToBody selector='cinq-drawer[cid="cart-drawer-demo"]' />
+  </section>
+</div>
+

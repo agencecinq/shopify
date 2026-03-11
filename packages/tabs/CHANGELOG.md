@@ -1,5 +1,11 @@
 # @agencecinq/tabs
 
+## 9.3.1
+
+### Patch Changes
+
+- y
+
 ## 9.3.0
 
 ### Minor Changes

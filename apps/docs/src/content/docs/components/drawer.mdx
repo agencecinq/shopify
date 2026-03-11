@@ -3,8 +3,9 @@ title: Drawer
 description: Slide-in drawer Web Component (`<cinq-drawer>`).
 ---
 
-import RegisterComponents from '../_components/RegisterComponents.astro';
-import PortalToBody from '../_components/PortalToBody.astro';
+import RegisterComponents from "../_components/RegisterComponents.astro";
+import PortalToBody from "../_components/PortalToBody.astro";
+import DrawerPlayground from "../_components/DrawerPlayground.astro";
 
 ## Install
 
@@ -27,8 +28,11 @@ import '@agencecinq/drawer';
   <div data-dom="overlay" class="fixed inset-0 z-[2147483646] bg-black/50 opacity-0 pointer-events-none group-[[open]]:opacity-100 group-[[open]]:pointer-events-auto"></div>
   <div role="dialog" class="fixed right-0 top-0 z-[2147483647] h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform group-[[open]]:translate-x-0">
     <div class="p-8 flex flex-col gap-4">
-      <h2 class="text-2xl font-bold">Drawer</h2>
-      <p class="text-gray-600">A slide-in panel with overlay.</p>
+      <h2 class="text-2xl font-bold">Bestiary drawer</h2>
+      <p class="text-gray-600">
+        Use the drawer as a sliding panel listing creatures from your AD&amp;D bestiary: trolls,
+        dracoliches, or galeb duhrs guarding the dungeon entrance.
+      </p>
       <cinq-drawer-button class="block">
         <button aria-controls="demo-drawer">Close</button>
       </cinq-drawer-button>
@@ -41,17 +45,26 @@ import '@agencecinq/drawer';
 
 ### Attributes
 
-- **`cid`** (required): drawer identifier (falls back to `id`).
-- **`open`**: reflected state attribute (used for styling).
+| Attribute | Required | Description                                      |
+| --------- | -------- | ------------------------------------------------ |
+| `cid`     | Yes      | Drawer identifier (falls back to `id`).         |
+| `open`    | No       | Reflected state attribute (useful for styling). |
 
 ### Methods
 
-- **`open()`**, **`close()`**, **`toggle()`**
+| Method     | Description                         |
+| ---------- | ----------------------------------- |
+| `open()`   | Opens the drawer.                  |
+| `close()`  | Closes the drawer.                 |
+| `toggle()` | Toggles between open and closed.   |
 
 ### Events
 
-- **`drawer-toggle`**: dispatched by `cinq-drawer-button` on `document.documentElement` with `detail: { drawer, trigger, trap }`
-- **`drawer-open`** / **`drawer-close`**: dispatched by `cinq-drawer`
+| Event           | Dispatched by         | Detail payload                      | Description                                                   |
+| --------------- | --------------------- | ----------------------------------- | ------------------------------------------------------------- |
+| `drawer-toggle` | `cinq-drawer-button`  | `{ drawer, trigger, trap }`        | Emitted on `document.documentElement` to request a toggle.    |
+| `drawer-open`   | `cinq-drawer`         | –                                   | Fired after the drawer has been opened.                       |
+| `drawer-close`  | `cinq-drawer`         | –                                   | Fired after the drawer has been closed.                       |
 
 ## Shopify (Liquid snippet)
 
@@ -77,7 +90,7 @@ This copies the package snippet to your theme:
 ```liquid
 {% render 'cinq-drawer.html',
   id: 'cart-drawer',
-  content: '<div class="p-8">Hello from the drawer</div>'
+  content: '<div class="p-8"><p class="mb-2">The galeb duhr looks like a boulder until it moves.</p><p class="mb-0">Trolls and jermlaines skulk deeper in the dungeon corridors.</p></div>'
 %}
 
 <cinq-drawer-button class="block">
@@ -109,8 +122,11 @@ This copies the package snippet to your theme:
         class="fixed right-0 top-0 z-[2147483647] h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-300 group-[[open]]:translate-x-0"
       >
         <div class="p-8 flex flex-col gap-4">
-          <h2 class="text-2xl font-bold">CINQ drawer</h2>
-          <p class="text-gray-600">Overlay, focus management, and scroll lock.</p>
+          <h2 class="text-2xl font-bold">CINQ drawer — encounter prep</h2>
+          <p class="text-gray-600">
+            Keep quick notes on the next encounter: a troll ambush, a cloaker in the rafters, or a
+            nest of jermlaines sabotaging the party.
+          </p>
           <cinq-drawer-button class="block">
             <button
               class="px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
@@ -127,6 +143,10 @@ This copies the package snippet to your theme:
 </div>
 
 <PortalToBody selector='cinq-drawer[cid="starlight-drawer"]' />
+
+## Playground (live)
+
+<DrawerPlayground />
 
 <RegisterComponents />
 

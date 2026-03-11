@@ -3,7 +3,8 @@ title: Modal
 description: Native `<dialog>` modal Web Component (`<cinq-modal>`).
 ---
 
-import RegisterComponents from '../_components/RegisterComponents.astro';
+import RegisterComponents from "../_components/RegisterComponents.astro";
+import ModalPlayground from "../_components/ModalPlayground.astro";
 
 ## Install
 
@@ -14,7 +15,7 @@ pnpm add @agencecinq/modal
 ## Usage
 
 ```js
-import '@agencecinq/modal';
+import "@agencecinq/modal";
 ```
 
 ```html
@@ -23,9 +24,17 @@ import '@agencecinq/modal';
 </cinq-modal-button>
 
 <cinq-modal id="demo-modal">
-  <dialog class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-2xl backdrop:bg-black/50">
-    <h2 class="text-xl font-semibold mb-2">Modal</h2>
-    <p class="text-gray-600 mb-4">This is a native <code>&lt;dialog&gt;</code> modal.</p>
+  <dialog
+    class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-2xl backdrop:bg-black/50 text-gray-900"
+  >
+    <h2 class="text-xl font-semibold mb-2">Monster entry</h2>
+    <p class="text-gray-800 mb-4">
+      This is a native <code>&lt;dialog&gt;</code> modal.
+    </p>
+    <p class="text-gray-800 mb-4">
+      The dracolich is an undead dragon created by forbidden rites; opening this
+      modal feels like leafing through the AD&amp;D Monster Manual.
+    </p>
 
     <cinq-modal-button class="block">
       <button aria-controls="demo-modal" aria-pressed="false">Close</button>
@@ -41,16 +50,57 @@ import '@agencecinq/modal';
 - **`<cinq-modal>`** must contain a **`<dialog>`** (or an element marked with **`[data-dialog]`**).
 - **`id` is required** for event-driven open/close (it must match the `aria-controls` of your buttons).
 
+Copy‑paste starter markup:
+
+```html
+<cinq-modal-button class="block">
+  <button
+    type="button"
+    aria-controls="example-modal"
+    aria-pressed="false"
+  >
+    Open modal
+  </button>
+</cinq-modal-button>
+
+<cinq-modal id="example-modal">
+  <dialog
+    class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-2xl backdrop:bg-black/50 text-gray-900"
+  >
+    <h2 class="text-xl font-semibold mb-2">Dracolich lore</h2>
+    <p class="text-gray-800 mb-4">
+      The dracolich is an undead dragon created by forbidden rites; opening this
+      modal feels like leafing through the AD&amp;D Monster Manual.
+    </p>
+
+    <cinq-modal-button class="block">
+      <button
+        type="button"
+        aria-controls="example-modal"
+        aria-pressed="false"
+        class="px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+      >
+        Close
+      </button>
+    </cinq-modal-button>
+  </dialog>
+</cinq-modal>
+```
+
 ### Methods
 
-- **`show()`**: opens the native dialog (calls `showModal()`).
-- **`close()`**: closes the dialog.
+| Method    | Description                                      |
+| --------- | ------------------------------------------------ |
+| `show()`  | Opens the native dialog (calls `showModal()`).   |
+| `close()` | Closes the dialog.                               |
 
 ### Events
 
-- **`modal-toggle`**: dispatched by `cinq-modal-button` on `document.documentElement` with `detail: { modal, trigger, trap }`
-- **`modal-open`**: dispatched by `cinq-modal` with `detail: { modal }`
-- **`modal-close`**: dispatched by `cinq-modal`
+| Event           | Dispatched by         | Detail payload                         | Description                                                   |
+| --------------- | --------------------- | -------------------------------------- | ------------------------------------------------------------- |
+| `modal-toggle`  | `cinq-modal-button`   | `{ modal, trigger, trap }`            | Emitted on `document.documentElement` to request a toggle.    |
+| `modal-open`    | `cinq-modal`          | `{ modal }`                            | Fired after the modal has been opened.                        |
+| `modal-close`   | `cinq-modal`          | –                                      | Fired after the modal has been closed.                        |
 
 ## Interactive example
 
@@ -67,11 +117,13 @@ import '@agencecinq/modal';
     </cinq-modal-button>
 
     <cinq-modal id="starlight-modal">
-      <dialog class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-8 shadow-2xl backdrop:bg-black/50">
+      <dialog class="fixed left-1/2 top-1/2 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-8 shadow-2xl backdrop:bg-black/50 text-gray-900">
         <div class="flex items-start justify-between gap-6">
           <div>
-            <h2 class="text-2xl font-bold mb-2">CINQ modal</h2>
-            <p class="text-gray-600">Click the backdrop or use the button to close.</p>
+            <h2 class="text-2xl font-bold mb-2">Dracolich lore</h2>
+            <p class="text-gray-800">
+              The dracolich retains the spellcasting and breath weapon of its original form, but its eyes burn with cold, undead hatred.
+            </p>
           </div>
           <cinq-modal-button class="block">
             <button
@@ -86,8 +138,12 @@ import '@agencecinq/modal';
         </div>
       </dialog>
     </cinq-modal>
+
   </div>
 </div>
 
-<RegisterComponents />
+## Playground (live)
 
+<ModalPlayground />
+
+<RegisterComponents />

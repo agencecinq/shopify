@@ -1,0 +1,252 @@
+---
+---
+
+<div class="not-content mt-6">
+  <section
+    class="rounded-2xl bg-white p-6 shadow flex flex-col gap-4"
+    data-demo-root="async-monsters"
+  >
+    <div class="flex flex-wrap items-end gap-3">
+      <label class="flex min-w-[220px] flex-1 flex-col gap-1.5">
+        <span class="text-sm font-medium text-gray-700">Add a monster tab</span>
+        <select
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+          data-monster-select
+        >
+          <option value="adult-black-dragon">Adult Black Dragon</option>
+          <option value="ancient-gold-dragon">Ancient Gold Dragon</option>
+          <option value="lich">Lich</option>
+          <option value="adult-red-dragon">Adult Red Dragon</option>
+          <option value="ancient-brass-dragon">Ancient Brass Dragon</option>
+        </select>
+      </label>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 text-sm"
+        data-monster-add
+      >
+        Add monster tab
+      </button>
+    </div>
+
+    <cinq-tabs
+      class="block flex flex-col gap-4"
+      data-tabs-hash="false"
+      data-tabs-delay="0"
+      data-demo="async-monsters"
+    >
+    <div
+      role="tablist"
+      aria-label="AD&D monsters (async)"
+      class="inline-flex gap-2 rounded-lg bg-gray-50 p-1 shadow-sm"
+    >
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="true"
+        aria-controls="adult-black-dragon-panel"
+        id="adult-black-dragon"
+      >
+        Adult Black Dragon
+      </button>
+      <button
+        type="button"
+        class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+        role="tab"
+        aria-selected="false"
+        aria-controls="ancient-gold-dragon-panel"
+        id="ancient-gold-dragon"
+        tabindex="-1"
+      >
+        Ancient Gold Dragon
+      </button>
+    </div>
+
+    <div data-tab-panels class="flex flex-col gap-4">
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="adult-black-dragon"
+        id="adult-black-dragon-panel"
+        class="rounded-xl bg-white p-4 shadow"
+      >
+        <h3 class="text-lg font-semibold text-gray-900" data-monster-name>Adult Black Dragon</h3>
+        <p class="text-sm text-gray-600" data-monster-meta>Loading from D&D API…</p>
+        <p class="mt-2 text-gray-700" data-monster-desc>
+          This panel will be populated from a public D&D monsters API on first activation.
+        </p>
+      </section>
+
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="ancient-gold-dragon"
+        id="ancient-gold-dragon-panel"
+        class="rounded-xl bg-white p-4 shadow"
+        hidden
+      >
+        <h3 class="text-lg font-semibold text-gray-900" data-monster-name>Ancient Gold Dragon</h3>
+        <p class="text-sm text-gray-600" data-monster-meta>Loading from D&D API…</p>
+        <p class="mt-2 text-gray-700" data-monster-desc>
+          Open this tab to fetch another monster payload.
+        </p>
+      </section>
+    </div>
+  </cinq-tabs>
+  </section>
+</div>
+
+<script>
+  const API_BASE = 'https://www.dnd5eapi.co/api/monsters';
+
+  function populatePanel(panelId, data) {
+    const panel = document.getElementById(panelId);
+    if (!panel || !data) return;
+
+    const nameEl = panel.querySelector('[data-monster-name]');
+    const metaEl = panel.querySelector('[data-monster-meta]');
+    const descEl = panel.querySelector('[data-monster-desc]');
+
+    if (nameEl) nameEl.textContent = data.name;
+
+    if (metaEl) {
+      const hp = data.hit_points;
+      const type = data.type;
+      const cr = data.challenge_rating;
+      metaEl.textContent = `${hp} HP · ${type} · CR ${cr}`;
+    }
+
+    if (descEl && Array.isArray(data.desc) && data.desc.length > 0) {
+      descEl.textContent = data.desc[0];
+    }
+  }
+
+  customElements.whenDefined('cinq-tabs').then(() => {
+    const root = document.querySelector('[data-demo-root="async-monsters"]');
+    if (!root) return;
+
+    const tabsEl = root.querySelector('cinq-tabs[data-demo="async-monsters"]');
+    const select = root.querySelector('[data-monster-select]');
+    const addBtn = root.querySelector('[data-monster-add]');
+    if (!tabsEl || !select || !addBtn) return;
+
+    function loadMonster(slug, panelId, onDone) {
+      fetch(`${API_BASE}/${encodeURIComponent(slug)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error('Network error');
+          return response.json();
+        })
+        .then((monster) => {
+          populatePanel(panelId, monster);
+          onDone?.();
+        })
+        .catch(() => {
+          const panel = document.getElementById(panelId);
+          const metaEl = panel?.querySelector('[data-monster-meta]');
+          if (metaEl) {
+            metaEl.textContent = 'Failed to load monster data.';
+          }
+          onDone?.();
+        });
+    }
+
+    // Preload the initially selected tab so the first panel is not stuck on "Loading".
+    const initialTab = tabsEl.querySelector('[role="tab"][aria-selected="true"]');
+    if (initialTab) {
+      const initialSlug = initialTab.id;
+      const initialControls = initialTab.getAttribute('aria-controls');
+      if (initialControls) {
+        loadMonster(initialSlug, initialControls);
+      }
+    }
+
+    // For activations, just fetch and hydrate the panel; let `<cinq-tabs>` handle switching.
+    tabsEl.addEventListener('tab-before-activate', (event) => {
+      const detail = event.detail;
+      if (!detail) return;
+
+      const { index, controls, element } = detail;
+
+      // Only handle our own demo instance.
+      if (!tabsEl.contains(element)) return;
+
+      const slug = element.id;
+
+      loadMonster(slug, controls);
+    });
+
+    addBtn.addEventListener('click', () => {
+      const list = tabsEl.querySelector('[role="tablist"]');
+      const panels = tabsEl.querySelector('[data-tab-panels]');
+      if (!list || !panels) return;
+
+      const selectEl = /** @type {HTMLSelectElement} */ (select);
+      const option = selectEl.selectedOptions[0];
+      if (!option) return;
+
+      const slug = option.value;
+      const label = option.textContent || slug;
+
+      const tabs = Array.from(list.querySelectorAll('[role="tab"]'));
+      const existingIndex = tabs.findIndex((tab) => tab.id === slug);
+      const controlsId = `${slug}-panel`;
+
+      if (existingIndex >= 0) {
+        // Tab already exists: just (re)load it; `<cinq-tabs>` handles activation.
+        loadMonster(slug, controlsId);
+        return;
+      }
+
+      // Re-initialize `<cinq-tabs>` around DOM mutations so it can bind events
+      // to the new tab and panel.
+      if (typeof tabsEl.destroy === 'function') {
+        tabsEl.destroy();
+      }
+
+      list.insertAdjacentHTML(
+        'beforeend',
+        `<button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="false"
+          aria-controls="${controlsId}"
+          id="${slug}"
+          tabindex="-1"
+        >${label}</button>`,
+      );
+
+      panels.insertAdjacentHTML(
+        'beforeend',
+        `<section
+          tabindex="0"
+          role="tabpanel"
+          aria-labelledby="${slug}"
+          id="${controlsId}"
+          class="rounded-xl bg-white p-4 shadow"
+          hidden
+        >
+          <h3 class="text-lg font-semibold text-gray-900" data-monster-name>${label}</h3>
+          <p class="text-sm text-gray-600" data-monster-meta>Loading from D&D API…</p>
+          <p class="mt-2 text-gray-700" data-monster-desc>
+            This panel will be populated from a public D&D monsters API on activation.
+          </p>
+        </section>`,
+      );
+
+      if (typeof tabsEl.init === 'function') {
+        tabsEl.init();
+      }
+
+      const newTab = /** @type {HTMLButtonElement | null} */ (list.querySelector(`#${slug}`));
+      if (newTab) {
+        newTab.focus();
+        newTab.click();
+      }
+
+      loadMonster(slug, controlsId);
+    });
+  });
+</script>
+

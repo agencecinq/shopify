@@ -1,0 +1,216 @@
+---
+---
+
+<section class="rounded-2xl bg-white p-6 shadow not-content" data-demo-root="add">
+  <div class="flex flex-col gap-4">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900">Add tabs at runtime</h3>
+      <p class="text-sm text-gray-600">
+        The pattern is: <span class="font-mono">destroy()</span> → mutate DOM → <span class="font-mono">init()</span>.
+      </p>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="block">
+        <span class="block text-sm font-medium text-gray-700 mb-1 block">Label</span>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          type="text"
+          placeholder="E.g. Galeb Duhr"
+          data-input="label"
+        />
+      </label>
+      <label class="block">
+        <span class="block text-sm font-medium text-gray-700 mb-1">Content</span>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          type="text"
+          placeholder="E.g. Boulder-like creature…"
+          data-input="content"
+        />
+      </label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+        data-action="add"
+      >
+        Add
+      </button>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200"
+        data-action="destroy"
+      >
+        Destroy
+      </button>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200"
+        data-action="create"
+      >
+        Create
+      </button>
+    </div>
+
+    <cinq-tabs
+      class="block flex flex-col gap-4"
+      data-tabs-hash="false"
+      data-tabs-delay="0"
+      data-demo="add"
+    >
+      <div
+        role="tablist"
+        aria-label="Add tabs example"
+        class="inline-flex flex-wrap gap-2 rounded-lg bg-gray-50 p-1"
+      >
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="true"
+          aria-controls="demo-add-galeb-panel"
+          id="demo-add-galeb"
+        >
+          Galeb Duhr
+        </button>
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="false"
+          aria-controls="demo-add-troll-panel"
+          id="demo-add-troll"
+          tabindex="-1"
+        >
+          Troll
+        </button>
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="false"
+          aria-controls="demo-add-jermlaine-panel"
+          id="demo-add-jermlaine"
+          tabindex="-1"
+          data-deletable="true"
+        >
+          Deletable
+        </button>
+      </div>
+
+      <div data-tab-panels class="flex flex-col gap-4">
+        <section
+          tabindex="0"
+          role="tabpanel"
+          aria-labelledby="demo-add-galeb"
+          id="demo-add-galeb-panel"
+          class="rounded-xl bg-gray-50 p-4"
+        >
+          <p class="text-gray-700">
+            The galeb duhr is a curious boulder-like creature with appendages that act as hands and feet.
+          </p>
+        </section>
+        <section
+          tabindex="0"
+          role="tabpanel"
+          aria-labelledby="demo-add-troll"
+          id="demo-add-troll-panel"
+          class="rounded-xl bg-gray-50 p-4"
+          hidden
+        >
+          <p class="text-gray-700">
+            Trolls are horrid carnivores found in all climes, from arctic wastelands to tropical jungles.
+          </p>
+        </section>
+        <section
+          tabindex="0"
+          role="tabpanel"
+          aria-labelledby="demo-add-jermlaine"
+          id="demo-add-jermlaine-panel"
+          class="rounded-xl bg-gray-50 p-4"
+          hidden
+        >
+          <p class="text-gray-700">
+            Jermlaine are a diminutive humanoid race that dwells in tunnels and ambushes hapless adventurers.
+          </p>
+        </section>
+      </div>
+    </cinq-tabs>
+  </div>
+</section>
+
+<script>
+  const slugify = (input) =>
+    input
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const tabClass =
+    'aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md';
+
+  // Add demo
+  {
+    const root = document.querySelector('[data-demo-root="add"]');
+    const tabsEl = document.querySelector('cinq-tabs[data-demo="add"]');
+    const list = tabsEl?.querySelector('[role="tablist"]');
+    const panels = tabsEl?.querySelector('[data-tab-panels]');
+    const labelInput = root?.querySelector('[data-input="label"]');
+    const contentInput = root?.querySelector('[data-input="content"]');
+
+    const destroyBtn = root?.querySelector('[data-action="destroy"]');
+    const createBtn = root?.querySelector('[data-action="create"]');
+    const addBtn = root?.querySelector('[data-action="add"]');
+
+    destroyBtn?.addEventListener('click', () => tabsEl?.destroy());
+    createBtn?.addEventListener('click', () => tabsEl?.init());
+
+    addBtn?.addEventListener('click', () => {
+      if (!(tabsEl && list && panels && labelInput && contentInput)) return;
+
+      const label = labelInput.value.trim();
+      const content = contentInput.value.trim();
+      if (!label || !content) return;
+
+      const id = `demo-add-${slugify(label)}`;
+      const panelId = `${id}-panel`;
+
+      tabsEl.destroy();
+
+      list.insertAdjacentHTML(
+        'beforeend',
+        `<button
+          type="button"
+          class="${tabClass}"
+          role="tab"
+          aria-selected="false"
+          aria-controls="${panelId}"
+          id="${id}"
+          tabindex="-1"
+        >${label}</button>`,
+      );
+
+      panels.insertAdjacentHTML(
+        'beforeend',
+        `<section
+          tabindex="0"
+          role="tabpanel"
+          aria-labelledby="${id}"
+          id="${panelId}"
+          class="rounded-xl bg-gray-50 p-4"
+          hidden
+        ><p class="text-gray-700">${content}</p></section>`,
+      );
+
+      tabsEl.init();
+      labelInput.value = '';
+      contentInput.value = '';
+    });
+  }
+</script>
+

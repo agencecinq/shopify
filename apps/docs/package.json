@@ -1,7 +1,7 @@
 {
   "name": "@agencecinq/docs",
   "type": "module",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "private": true,
   "description": "CINQ UI components documentation site (Starlight).",
   "scripts": {

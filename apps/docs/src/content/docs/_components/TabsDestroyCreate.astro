@@ -1,0 +1,101 @@
+---
+---
+
+<section class="rounded-2xl bg-white p-6 shadow not-content">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Destroy / Create</h3>
+        <p class="text-sm text-gray-600">
+          Useful when you mutate the DOM and want to re-bind events.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="px-3 py-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200"
+          data-action="destroy"
+        >
+          Destroy
+        </button>
+        <button
+          type="button"
+          class="px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+          data-action="create"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+
+    <cinq-tabs
+      class="block flex flex-col gap-4"
+      data-tabs-hash="false"
+      data-tabs-delay="0"
+      data-demo="destroy"
+    >
+      <div
+        role="tablist"
+        aria-label="Destroy/Create tabs"
+        class="inline-flex gap-2 rounded-lg bg-gray-50 p-1"
+      >
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="true"
+          aria-controls="demo-dc-home-panel"
+          id="demo-dc-home"
+        >
+          Home
+        </button>
+        <button
+          type="button"
+          class="aria-selected:bg-black aria-selected:text-white text-gray-700 hover:bg-gray-100 px-3 py-1.5 text-sm font-medium rounded-md"
+          role="tab"
+          aria-selected="false"
+          aria-controls="demo-dc-project-panel"
+          id="demo-dc-project"
+          tabindex="-1"
+        >
+          Project
+        </button>
+      </div>
+
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="demo-dc-home"
+        id="demo-dc-home-panel"
+        class="rounded-xl bg-gray-50 p-4"
+      >
+        <p class="text-gray-700">
+          Destroy removes ARIA state + listeners, Create re-initializes.
+        </p>
+      </section>
+      <section
+        tabindex="0"
+        role="tabpanel"
+        aria-labelledby="demo-dc-project"
+        id="demo-dc-project-panel"
+        class="rounded-xl bg-gray-50 p-4"
+        hidden
+      >
+        <p class="text-gray-700">Try keyboard navigation after Create.</p>
+      </section>
+    </cinq-tabs>
+  </div>
+</section>
+
+<script>
+  // Destroy / Create demo
+  {
+    const root = document.querySelector('[data-demo="destroy"]')?.closest('section');
+    const tabsEl = document.querySelector('cinq-tabs[data-demo="destroy"]');
+    if (root && tabsEl) {
+      root.querySelector('[data-action="destroy"]')?.addEventListener('click', () => tabsEl.destroy());
+      root.querySelector('[data-action="create"]')?.addEventListener('click', () => tabsEl.init());
+    }
+  }
+</script>
+
