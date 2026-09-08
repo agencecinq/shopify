@@ -23,6 +23,7 @@
     "@agencecinq/drawer": "workspace:*",
     "@agencecinq/modal": "workspace:*",
     "@agencecinq/spinbutton": "workspace:*",
+    "@agencecinq/slider": "workspace:*",
     "@agencecinq/switch": "workspace:*",
     "@agencecinq/tabs": "workspace:*",
     "@agencecinq/utils": "workspace:*",

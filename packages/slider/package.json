@@ -1,0 +1,43 @@
+{
+  "name": "@agencecinq/slider",
+  "version": "6.0.0",
+  "description": "Accessible, WAI-ARIA slider as a lightweight Web Component.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Jérémy Levron <jeremy@agencecinq.com> (https://agencecinq.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agencecinq/shopify.git",
+    "directory": "packages/slider"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@agencecinq/utils": "*"
+  },
+  "devDependencies": {
+    "@agencecinq/utils": "workspace:*",
+    "vite": "^8.2.0",
+    "vite-plugin-dts": "^5.0.3",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

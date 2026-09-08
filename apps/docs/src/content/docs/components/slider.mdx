@@ -1,0 +1,303 @@
+---
+title: Slider
+description: Accessible WAI-ARIA slider Web Components, `<cinq-slider>` and `<cinq-slider-range>`.
+---
+
+import SliderPlayground from "../_components/SliderPlayground.astro";
+
+A slider lets users pick a value within a range by moving a thumb along a rail.
+`<cinq-slider>` is the **rail** (geometry + CSS variables). A nested
+`[role="slider"]` thumb is the focusable control.
+
+Implementation follows the
+[WAI-ARIA Authoring Practices slider pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/).
+Inspired by [`@19h47/slider`](https://github.com/19h47/19h47-slider).
+
+## Install
+
+```bash
+pnpm add @agencecinq/slider
+```
+
+One import registers both tags:
+
+```js
+import "@agencecinq/slider";
+```
+
+```html
+<label id="volume-label" for="volume-slider">Volume</label>
+<cinq-slider class="volume-rail">
+  <button
+    type="button"
+    id="volume-slider"
+    role="slider"
+    tabindex="0"
+    aria-labelledby="volume-label"
+    aria-orientation="horizontal"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="50"
+    aria-valuetext="50%"
+  ></button>
+</cinq-slider>
+```
+
+> **HTML is the source of truth.** The component will not auto-set `role`,
+> auto-migrate attributes, or warn about missing labels. Use an a11y linter
+> (axe-core, Lighthouse) to catch invalid markup.
+
+The package implements APG behaviour (keyboard, pointer, ARIA sync, events).
+**Layout, hit area, contrast, and focus rings are your CSS.**
+
+## Required markup, single
+
+| Attribute / element | Required | Role |
+| ------------------- | -------- | ---- |
+| `<cinq-slider>` | **Yes** | Rail. Exactly **one** thumb. |
+| `[role="slider"]` | **Yes** | Focusable thumb (`$thumb`). |
+| `tabindex="0"` | **Yes** | On the thumb. |
+| `aria-orientation="horizontal"` or `"vertical"` | **Yes** | On the thumb. |
+| `aria-valuemin` / `aria-valuemax` / `aria-valuenow` | **Yes** | On the thumb. |
+| `aria-label` or `aria-labelledby` | **Yes** | On the thumb, per APG. |
+
+## Range, `<cinq-slider-range>`
+
+Two thumbs in APG order: **max** (first in DOM), **min** (second).
+
+For **three shares that must sum to a fixed total**, use three `<cinq-slider>` hosts
+and rebalance in app code. See **Party loot (1000 gp)** in the playground: each
+slider is one hero&apos;s share in gp. When one share grows, the script takes gp
+from the others (rogue first, then cleric or paladin) so the total stays 1000.
+
+## Options
+
+| Attribute | Type | Default | Description |
+| --------- | ---- | ------- | ----------- |
+| `data-step` | number | `1` | Arrow key increment. |
+| `data-page` | number | `10` | Page Up / Page Down increment. |
+
+Thumb and track layout are consumer CSS. The component only sets host CSS variables.
+
+## Keyboard
+
+**Range:** both thumbs are focusable. **Tab** / **Shift+Tab** moves between max
+(first in DOM) and min (second); arrow keys move the focused thumb. Tab order
+is DOM order (APG), not left-to-right when handles overlap.
+
+**Vertical:** Up increases, Down decreases. RTL does not apply to the vertical axis.
+
+| Key | Horizontal LTR | Horizontal RTL | Vertical |
+| --- | -------------- | -------------- | -------- |
+| Right | + step | − step | + step |
+| Left | − step | + step | − step |
+| Up / Down | + / − step | same | + / − step |
+| Home / End | min / max (single); APG multi-thumb (range) | same | same |
+| Page Up / Down | + / − page | same | same |
+
+## RTL
+
+Set `dir="rtl"` on `<cinq-slider>` or an ancestor for **horizontal** sliders.
+Thumb position and pointer mapping mirror. Left / Right keys swap. Vertical
+sliders ignore `direction` on the value axis. `aria-valuenow` and `--ratio`
+stay semantic (0 = min, 1 = max).
+
+## Events
+
+Both hosts emit `slider:change` with the same detail:
+
+| Field | Description |
+| ----- | ----------- |
+| `min` | Current low end (single: current value) |
+| `max` | Current high end (single: same as `min`) |
+| `$thumb` | Handle that moved or has focus |
+
+```js
+import { EVENTS } from "@agencecinq/utils";
+
+document.querySelector("cinq-slider-range")?.addEventListener(
+  EVENTS.SLIDER_CHANGE,
+  (event) => {
+    const { min, max, $thumb } = event.detail;
+    console.log(min, max, $thumb);
+  },
+);
+```
+
+## Positioning with CSS variables
+
+The package **does not** position thumbs or track in JS. It syncs ARIA and sets CSS custom properties on the host. You implement layout in your stylesheet.
+
+### Variables
+
+| Host | Properties | Meaning |
+| ---- | ---------- | ------- |
+| `<cinq-slider>` | `--value`, `--ratio` | Current value, ratio `0` to `1` within bounds |
+| `<cinq-slider-range>` | `--min`, `--max`, `--min-ratio`, `--max-ratio` | Current range; semantic ratios within global bounds |
+
+Ratios are semantic (`0` = min, `1` = max), including in RTL. Prefer **logical properties** (`inset-inline-start`) so layout mirrors with `dir="rtl"`.
+
+Define thumb size on the host (your naming, not set by the lib):
+
+```css
+cinq-slider {
+  position: relative;
+  --thumb-size: 2.75rem;
+}
+```
+
+### Single thumb
+
+**Rail** (inset by half a thumb so the handle reaches both ends):
+
+```css
+cinq-slider::before {
+  content: "";
+  position: absolute;
+  inset-inline: calc(var(--thumb-size) / 2);
+  top: 50%;
+  block-size: 0.375rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+}
+
+cinq-slider::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(var(--thumb-size) / 2);
+  top: 50%;
+  width: calc(var(--ratio) * (100% - var(--thumb-size)));
+  block-size: 0.375rem;
+  border-radius: 9999px;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+```
+
+**Thumb:**
+
+```css
+cinq-slider [role="slider"] {
+  position: absolute;
+  top: calc(50% - var(--thumb-size) / 2);
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  inset-inline-start: calc(var(--ratio) * (100% - var(--thumb-size)));
+}
+```
+
+### Range (two thumbs)
+
+DOM order: **first = max**, **second = min**.
+
+```css
+cinq-slider-range {
+  position: relative;
+  --thumb-size: 1rem;
+}
+
+cinq-slider-range::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(
+    var(--thumb-size) / 2 + var(--min-ratio) * (100% - var(--thumb-size))
+  );
+  top: 50%;
+  width: calc(
+    (var(--max-ratio) - var(--min-ratio)) * (100% - var(--thumb-size))
+  );
+  block-size: 0.375rem;
+  border-radius: 0;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+
+cinq-slider-range [role="slider"]:first-child {
+  inset-inline-start: calc(var(--max-ratio) * (100% - var(--thumb-size)));
+}
+
+cinq-slider-range [role="slider"]:last-child {
+  inset-inline-start: calc(var(--min-ratio) * (100% - var(--thumb-size)));
+}
+```
+
+When thumbs share the same value, the host sets `[data-collapsed]`. Offset the min
+handle by one thumb width on the low side so both stay visible (see README).
+When they differ but meet, use `[data-active="min"]` / `[data-active="max"]` to
+raise `z-index` on the active handle.
+
+### Hooks
+
+| Hook | Use |
+| ---- | --- |
+| `[dragging]` | Grabbing cursor, active state |
+| `[data-active="min"\|"max"]` | Range overlap stacking |
+| `[data-collapsed]` | `min === max`, side-by-side thumb layout |
+
+See the playground below for working examples (compact thumbs, seek label, price range).
+
+## Advanced encounter builder
+
+The **Encounter builder (advanced)** playground demo combines:
+
+- preset loading with `setValues(min, max, { emit: false })` (silent sync, no event flood)
+- reading `event.detail.$thumb` and comparing to `host.$min` / `host.$max`
+- hidden inputs synced from the range for `FormData` on submit
+- `formatValue` for readable `aria-valuetext` on both thumbs
+
+```js
+host.setValues(4, 10, { active: "min", emit: false });
+
+host.addEventListener(EVENTS.SLIDER_CHANGE, (event) => {
+  const { min, max, $thumb } = event.detail;
+  const which =
+    $thumb === host.$min ? "min" : $thumb === host.$max ? "max" : null;
+});
+```
+
+## Styling hooks (summary)
+
+| Hook | Host |
+| ---- | ---- |
+| `[dragging]` | Both |
+| `--value` / `--ratio` | `<cinq-slider>` |
+| `[data-active]` / `--min-ratio` / `--max-ratio` | `<cinq-slider-range>` |
+
+## Consumer styling and accessibility
+
+**Not enforced by the package.**
+
+- **Touch targets:** WCAG recommends at least **44×44 CSS px** for pointer
+  targets. Use a large hit area with a smaller visual knob if needed.
+- **Focus:** style `:focus-visible` on the thumb.
+- **Touch AT:** the APG [warns](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)
+  that some touch-based assistive technologies may not yet synthesize key events
+  for custom sliders. Test on real devices with VoiceOver / TalkBack.
+
+## API
+
+### `Slider`, `<cinq-slider>`
+
+| Method / property | Description |
+| ----------------- | ----------- |
+| `setValue`, `sync`, `rect`, `init`, `destroy` | Single-thumb API. |
+| `$thumb`, `value`, `min`, `max`, `ratio` | Read from thumb ARIA. |
+| `formatValue` | `(value) => string` for `aria-valuetext`. |
+
+### `SliderRange`, `<cinq-slider-range>`
+
+| Method / property | Description |
+| ----------------- | ----------- |
+| `setValues(min, max, { active?, emit? })` | Anti-cross update. |
+| `$max`, `$min`, `min`, `max`, `boundsMin`, `boundsMax` | Range state. |
+| `formatValue` | Applied to both thumbs. |
+
+## Playground
+
+<SliderPlayground />
+
+## Acknowledgments
+
+- [WAI-ARIA Slider Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)
+- [`@19h47/slider`](https://github.com/19h47/19h47-slider)

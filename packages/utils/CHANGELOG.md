@@ -1,5 +1,11 @@
 # @agencecinq/utils
 
+## 7.2.0
+
+### Minor Changes
+
+- Add `SLIDER_CHANGE` (`slider:change`) for `@agencecinq/slider`.
+
 ## 7.1.0
 
 ### Minor Changes

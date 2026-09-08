@@ -1,0 +1,1564 @@
+---
+import RegisterComponents from './RegisterComponents.astro';
+---
+
+<RegisterComponents />
+
+<style is:global>
+  .docs-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .docs-slider__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .docs-slider__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+  }
+
+  .docs-slider__value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .docs-slider-rail {
+    position: relative;
+    width: 100%;
+    block-size: 2.75rem;
+    touch-action: none;
+    user-select: none;
+    --docs-slider-thumb: 2.75rem;
+  }
+
+  .docs-slider-rail--compact {
+    --docs-slider-thumb: 1rem;
+  }
+
+  .docs-slider-rail--seek {
+    --docs-slider-thumb: 0.875rem;
+    block-size: 4.5rem;
+  }
+
+  .docs-slider-rail::before {
+    content: '';
+    position: absolute;
+    inset-inline: calc(var(--docs-slider-thumb) / 2);
+    top: 50%;
+    block-size: 0.375rem;
+    border-radius: 9999px;
+    background: #e5e7eb;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .docs-slider-rail::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: calc(var(--docs-slider-thumb) / 2);
+    top: 50%;
+    width: calc(var(--ratio) * (100% - var(--docs-slider-thumb)));
+    block-size: 0.375rem;
+    border-radius: 9999px;
+    background: #111827;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .docs-slider-rail [role='slider'] {
+    position: absolute;
+    top: calc(50% - var(--docs-slider-thumb) / 2);
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .docs-slider-rail:not(.docs-slider-rail--range) [role='slider'] {
+    inset-inline-start: calc(var(--ratio) * (100% - var(--docs-slider-thumb)));
+  }
+
+  .docs-slider-rail--range [role='slider']:first-child {
+    inset-inline-start: calc(var(--max-ratio) * (100% - var(--docs-slider-thumb)));
+    z-index: 2;
+  }
+
+  .docs-slider-rail--range [role='slider']:last-child {
+    inset-inline-start: calc(var(--min-ratio) * (100% - var(--docs-slider-thumb)));
+  }
+
+  .docs-slider-rail--range[data-active='min'] [role='slider']:last-child {
+    z-index: 3;
+  }
+
+  .docs-slider-rail--range[data-active='max'] [role='slider']:first-child {
+    z-index: 3;
+  }
+
+  /* Collapsed (min === max): offset min on the low side so both handles stay visible. */
+  .docs-slider-rail--range[data-collapsed] [role='slider']:last-child {
+    inset-inline-start: calc(
+      var(--min-ratio) * (100% - var(--docs-slider-thumb)) - var(--docs-slider-thumb)
+    );
+  }
+
+  [dir='rtl'] .docs-slider-rail--range[data-collapsed] [role='slider']:last-child {
+    inset-inline-start: calc(
+      var(--min-ratio) * (100% - var(--docs-slider-thumb)) + var(--docs-slider-thumb)
+    );
+  }
+
+  .docs-slider-rail--vertical.docs-slider-rail--range[data-collapsed] [role='slider']:last-child {
+    inset-block-end: calc(
+      var(--min-ratio) * (100% - var(--docs-slider-thumb)) - var(--docs-slider-thumb)
+    );
+  }
+
+  .docs-slider-rail--seek [role='slider'] {
+    top: calc(50% - 1.5rem);
+    width: var(--docs-slider-thumb);
+    height: 3rem;
+    border-radius: 0.3125rem;
+    background: #fff;
+    border: 2px solid #111827;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+  }
+
+  .docs-slider-rail [role='slider']:active,
+  .docs-slider-rail[dragging] [role='slider'] {
+    cursor: grabbing;
+  }
+
+  .docs-slider-rail--compact [role='slider'] {
+    width: var(--docs-slider-thumb);
+    height: var(--docs-slider-thumb);
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #111827;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+  }
+
+  .docs-slider-rail [role='slider']:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: 3px;
+  }
+
+  .docs-slider-rail--range [role='slider']:focus-visible {
+    z-index: 4;
+  }
+
+  .docs-slider-rail--seek [data-seek-value] {
+    position: absolute;
+    inset-inline-start: 50%;
+    top: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #111827;
+    pointer-events: none;
+    white-space: nowrap;
+    transform: translate(-50%, calc(-100% - 0.35rem));
+  }
+
+  .docs-slider-seek-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-block-start: 0.35rem;
+    padding-inline: calc(var(--docs-slider-thumb) / 2);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.6875rem;
+    color: #6b7280;
+    list-style: none;
+  }
+
+  .docs-slider-color {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .docs-slider-color {
+      grid-template-columns: 5rem 1fr;
+      align-items: start;
+    }
+  }
+
+  .docs-slider-color__preview {
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    background: rgb(128 64 32);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 5%);
+  }
+
+  .docs-slider-color__channels {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .docs-slider-rating-scale {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: calc(var(--docs-slider-thumb) / 2);
+    font-size: 0.6875rem;
+    color: #6b7280;
+  }
+
+  .docs-slider-status {
+    font-size: 0.875rem;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #f9fafb;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .docs-slider-status code {
+    font-size: 0.8125rem;
+  }
+
+  .docs-slider--compact {
+    --docs-slider-thumb: 1rem;
+  }
+
+  .docs-slider--seek {
+    --docs-slider-thumb: 0.875rem;
+  }
+
+  .docs-slider-rail--range::after {
+    inset-inline-start: calc(
+      var(--docs-slider-thumb) / 2 + var(--min-ratio) * (100% - var(--docs-slider-thumb))
+    );
+    width: calc(
+      (var(--max-ratio) - var(--min-ratio)) * (100% - var(--docs-slider-thumb))
+    );
+    border-radius: 0;
+  }
+
+  .docs-slider-range-labels {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: calc(var(--docs-slider-thumb) / 2);
+    font-size: 0.6875rem;
+    color: #6b7280;
+  }
+
+  .docs-slider-step-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-block-start: 0.35rem;
+    padding-inline: calc(var(--docs-slider-thumb) / 2);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.6875rem;
+    color: #6b7280;
+    list-style: none;
+  }
+
+  .docs-slider-vertical {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .docs-slider-rail--vertical {
+    width: var(--docs-slider-thumb);
+    height: 14rem;
+    flex-shrink: 0;
+  }
+
+  .docs-slider-rail--vertical::before {
+    inset-inline: auto;
+    inset-block: calc(var(--docs-slider-thumb) / 2);
+    inset-inline-start: 50%;
+    top: calc(var(--docs-slider-thumb) / 2);
+    bottom: calc(var(--docs-slider-thumb) / 2);
+    left: 50%;
+    width: 0.375rem;
+    height: auto;
+    transform: translateX(-50%);
+  }
+
+  .docs-slider-rail--vertical::after {
+    inset-inline-start: 50%;
+    inset-block-start: auto;
+    inset-block-end: calc(var(--docs-slider-thumb) / 2);
+    top: auto;
+    left: 50%;
+    width: 0.375rem;
+    height: calc(var(--ratio) * (100% - var(--docs-slider-thumb)));
+    transform: translateX(-50%);
+    border-radius: 9999px;
+  }
+
+  .docs-slider-rail--vertical:not(.docs-slider-rail--range) [role='slider'] {
+    inset-inline-start: calc(50% - var(--docs-slider-thumb) / 2);
+    inset-block-start: auto;
+    inset-block-end: calc(var(--ratio) * (100% - var(--docs-slider-thumb)));
+    top: auto;
+    width: var(--docs-slider-thumb);
+    height: var(--docs-slider-thumb);
+  }
+
+  .docs-slider-rail--vertical.docs-slider-rail--range [role='slider']:first-child {
+    inset-inline-start: calc(50% - var(--docs-slider-thumb) / 2);
+    inset-block-start: auto;
+    inset-block-end: calc(var(--max-ratio) * (100% - var(--docs-slider-thumb)));
+    top: auto;
+  }
+
+  .docs-slider-rail--vertical.docs-slider-rail--range [role='slider']:last-child {
+    inset-inline-start: calc(50% - var(--docs-slider-thumb) / 2);
+    inset-block-start: auto;
+    inset-block-end: calc(var(--min-ratio) * (100% - var(--docs-slider-thumb)));
+    top: auto;
+  }
+
+  .docs-slider-rail--vertical.docs-slider-rail--range::after {
+    inset-block-end: calc(
+      var(--docs-slider-thumb) / 2 + var(--min-ratio) * (100% - var(--docs-slider-thumb))
+    );
+    height: calc(
+      (var(--max-ratio) - var(--min-ratio)) * (100% - var(--docs-slider-thumb))
+    );
+    border-radius: 0;
+  }
+
+  .docs-slider-rail--vertical.docs-slider-rail--range [role='slider']:first-child {
+    z-index: 2;
+  }
+
+  .docs-slider-vertical-ticks {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    height: 14rem;
+    padding-block: calc(var(--docs-slider-thumb) / 2);
+    margin: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .docs-slider-advanced-layout {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .docs-slider-advanced-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+      align-items: start;
+    }
+  }
+
+  .docs-slider-advanced-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .docs-slider-advanced-log {
+    margin: 0;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #f9fafb;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    color: #374151;
+    max-height: 10rem;
+    overflow: auto;
+    white-space: pre-wrap;
+  }
+
+  .docs-slider-advanced-output {
+    margin: 0;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #111827;
+    color: #f9fafb;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+
+  .docs-slider-advanced-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .docs-slider-party-split {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .docs-slider-party-split__total {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+</style>
+
+<div class="not-content">
+  <div class="flex flex-col gap-10">
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Tabard colors</h3>
+          <p class="text-sm text-gray-600">
+            Three sliders mix crimson, verdant, and azure dye for your character token.
+          </p>
+        </div>
+
+        <div class="docs-slider-color">
+          <div
+            id="docs-slider-color-preview"
+            class="docs-slider-color__preview"
+            aria-hidden="true"
+          ></div>
+
+          <div class="docs-slider-color__channels">
+            {
+              [
+                ['Crimson', 'crimson', 128],
+                ['Verdant', 'verdant', 64],
+                ['Azure', 'azure', 32],
+              ].map(([label, channel, initial]) => (
+                <div class="docs-slider">
+                  <div class="docs-slider__header">
+                    <span id={`docs-slider-color-${channel}-label`} class="docs-slider__label">
+                      {label}
+                    </span>
+                    <span
+                      id={`docs-slider-color-${channel}-value`}
+                      class="docs-slider__value"
+                      aria-hidden="true"
+                    >
+                      {initial}
+                    </span>
+                  </div>
+                  <cinq-slider
+                    id={`docs-slider-color-${channel}`}
+                    class="docs-slider-rail docs-slider-rail--compact"
+                    data-channel={channel}
+                  >
+                    <button
+                      type="button"
+                      role="slider"
+                      tabindex="0"
+                      aria-labelledby={`docs-slider-color-${channel}-label`}
+                      aria-orientation="horizontal"
+                      aria-valuemin="0"
+                      aria-valuemax="255"
+                      aria-valuenow={initial}
+                      aria-valuetext={`${initial}`}
+                    ></button>
+                  </cinq-slider>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <p class="docs-slider-status">
+          Heraldry preview:{' '}
+          <span id="docs-slider-color-hex" class="font-mono font-medium text-gray-900">
+            #804020
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Encounter difficulty</h3>
+          <p class="text-sm text-gray-600">
+            Rate the last fight from 0 to 10 with readable <code>aria-valuetext</code>.
+          </p>
+        </div>
+
+        <div class="docs-slider docs-slider--compact">
+          <label id="docs-slider-rating-label" class="docs-slider__label">
+            How deadly was this encounter?
+          </label>
+
+          <cinq-slider
+            id="docs-slider-rating"
+            class="docs-slider-rail docs-slider-rail--compact"
+            data-step="1"
+            data-page="2"
+          >
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-labelledby="docs-slider-rating-label"
+              aria-orientation="horizontal"
+              aria-valuemin="0"
+              aria-valuemax="10"
+              aria-valuenow="0"
+              aria-valuetext="Rate the encounter from 1 to 10, where 10 is a total party kill"
+            ></button>
+          </cinq-slider>
+
+          <div class="docs-slider-rating-scale" aria-hidden="true">
+            <span>1 Trivial skirmish</span>
+            <span>10 Total party kill</span>
+          </div>
+        </div>
+
+        <p class="docs-slider-status">
+          <code>aria-valuetext</code>:{' '}
+          <span id="docs-slider-rating-status" class="font-mono font-medium text-gray-900">
+            Rate the encounter from 1 to 10, where 10 is a total party kill
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Battle replay</h3>
+          <p class="text-sm text-gray-600">
+            Scrub through a five-minute combat log. Values read as minutes and seconds.
+          </p>
+        </div>
+
+        <div class="docs-slider docs-slider--seek">
+          <span id="docs-slider-seek-label" class="docs-slider__label">Round timeline</span>
+
+          <cinq-slider
+            id="docs-slider-seek"
+            class="docs-slider-rail docs-slider-rail--seek"
+            data-step="1"
+            data-page="15"
+          >
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-labelledby="docs-slider-seek-label"
+              aria-orientation="horizontal"
+              aria-valuemin="0"
+              aria-valuemax="300"
+              aria-valuenow="90"
+              aria-valuetext="1 minute 30 seconds"
+            >
+              <span data-seek-value aria-hidden="true">1:30</span>
+            </button>
+          </cinq-slider>
+
+          <ol class="docs-slider-seek-ticks" aria-hidden="true">
+            <li>0:00</li>
+            <li>1:00</li>
+            <li>2:00</li>
+            <li>3:00</li>
+            <li>4:00</li>
+            <li>5:00</li>
+          </ol>
+        </div>
+
+        <p class="docs-slider-status">
+          <code>aria-valuetext</code>:{' '}
+          <span id="docs-slider-seek-status" class="font-mono font-medium text-gray-900">
+            1 minute 30 seconds
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Loot split</h3>
+          <p class="text-sm text-gray-600">
+            Two thumbs pick a gold piece range for the party treasury split. Tab between handles.
+            Arrow keys move the focused one.
+          </p>
+        </div>
+
+        <div class="docs-slider docs-slider--compact">
+          <span id="docs-slider-price-label" class="docs-slider__label">Treasure share (gp)</span>
+
+          <cinq-slider-range
+            id="docs-slider-price"
+            class="docs-slider-rail docs-slider-rail--compact docs-slider-rail--range"
+            data-step="10"
+            data-page="50"
+            aria-labelledby="docs-slider-price-label"
+          >
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-label="Maximum share"
+              aria-orientation="horizontal"
+              aria-valuemin="100"
+              aria-valuemax="1000"
+              aria-valuenow="800"
+              aria-valuetext="800 gp"
+            ></button>
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-label="Minimum share"
+              aria-orientation="horizontal"
+              aria-valuemin="100"
+              aria-valuemax="1000"
+              aria-valuenow="200"
+              aria-valuetext="200 gp"
+            ></button>
+          </cinq-slider-range>
+
+          <div class="docs-slider-range-labels" aria-hidden="true">
+            <span>100 gp</span>
+            <span>1000 gp</span>
+          </div>
+        </div>
+
+        <p class="docs-slider-status">
+          Split:{' '}
+          <span id="docs-slider-price-status" class="font-mono font-medium text-gray-900">
+            200 gp to 800 gp
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Party loot (1000 gp)</h3>
+          <p class="text-sm text-gray-600">
+            Split a fixed 1000 gp treasury between three characters. Each slider is that
+            hero&apos;s share. The three values always sum to 1000 (app code on{' '}
+            <code>slider:change</code> takes from the others when one share grows).
+          </p>
+        </div>
+
+        <div class="docs-slider-party-split">
+          <div class="docs-slider docs-slider--compact">
+            <div class="docs-slider__header">
+              <label id="docs-slider-party-paladin-label" class="docs-slider__label">
+                Paladin share
+              </label>
+              <span
+                id="docs-slider-party-paladin-value"
+                class="docs-slider__value"
+                aria-hidden="true"
+              >
+                300
+              </span>
+            </div>
+            <cinq-slider
+              id="docs-slider-party-paladin"
+              class="docs-slider-rail docs-slider-rail--compact"
+              data-step="25"
+              data-page="100"
+            >
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-labelledby="docs-slider-party-paladin-label"
+                aria-orientation="horizontal"
+                aria-valuemin="0"
+                aria-valuemax="1000"
+                aria-valuenow="300"
+                aria-valuetext="300 gp"
+              ></button>
+            </cinq-slider>
+          </div>
+
+          <div class="docs-slider docs-slider--compact">
+            <div class="docs-slider__header">
+              <label id="docs-slider-party-cleric-label" class="docs-slider__label">
+                Cleric share
+              </label>
+              <span
+                id="docs-slider-party-cleric-value"
+                class="docs-slider__value"
+                aria-hidden="true"
+              >
+                350
+              </span>
+            </div>
+            <cinq-slider
+              id="docs-slider-party-cleric"
+              class="docs-slider-rail docs-slider-rail--compact"
+              data-step="25"
+              data-page="100"
+            >
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-labelledby="docs-slider-party-cleric-label"
+                aria-orientation="horizontal"
+                aria-valuemin="0"
+                aria-valuemax="1000"
+                aria-valuenow="350"
+                aria-valuetext="350 gp"
+              ></button>
+            </cinq-slider>
+          </div>
+
+          <div class="docs-slider docs-slider--compact">
+            <div class="docs-slider__header">
+              <label id="docs-slider-party-rogue-label" class="docs-slider__label">
+                Rogue share
+              </label>
+              <span
+                id="docs-slider-party-rogue-value"
+                class="docs-slider__value"
+                aria-hidden="true"
+              >
+                350
+              </span>
+            </div>
+            <cinq-slider
+              id="docs-slider-party-rogue"
+              class="docs-slider-rail docs-slider-rail--compact"
+              data-step="25"
+              data-page="100"
+            >
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-labelledby="docs-slider-party-rogue-label"
+                aria-orientation="horizontal"
+                aria-valuemin="0"
+                aria-valuemax="1000"
+                aria-valuenow="350"
+                aria-valuetext="350 gp"
+              ></button>
+            </cinq-slider>
+          </div>
+
+          <p class="docs-slider-party-split__total" aria-hidden="true">
+            Total treasury: 1000 gp
+          </p>
+        </div>
+
+        <p class="docs-slider-status">
+          Split:{' '}
+          <span id="docs-slider-party-status" class="font-mono font-medium text-gray-900">
+            300 + 350 + 350 = 1000 gp
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Party treasury</h3>
+          <p class="text-sm text-gray-600">
+            Multi-thumb range with <code>data-step="50"</code>. Gold snaps on pointer, keyboard, and
+            Page Up/Down (<code>data-page="150"</code>).
+          </p>
+        </div>
+
+        <div class="docs-slider docs-slider--compact">
+          <span id="docs-slider-budget-label" class="docs-slider__label">
+            Shared fund (gp)
+          </span>
+
+          <cinq-slider-range
+            id="docs-slider-budget"
+            class="docs-slider-rail docs-slider-rail--compact docs-slider-rail--range"
+            data-step="50"
+            data-page="150"
+            aria-labelledby="docs-slider-budget-label"
+          >
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-label="Maximum fund"
+              aria-orientation="horizontal"
+              aria-valuemin="0"
+              aria-valuemax="500"
+              aria-valuenow="350"
+              aria-valuetext="350 gp"
+            ></button>
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-label="Minimum fund"
+              aria-orientation="horizontal"
+              aria-valuemin="0"
+              aria-valuemax="500"
+              aria-valuenow="100"
+              aria-valuetext="100 gp"
+            ></button>
+          </cinq-slider-range>
+
+          <ol class="docs-slider-step-ticks" aria-hidden="true">
+            <li>0 gp</li>
+            <li>50 gp</li>
+            <li>100 gp</li>
+            <li>150 gp</li>
+            <li>200 gp</li>
+            <li>250 gp</li>
+            <li>300 gp</li>
+            <li>350 gp</li>
+            <li>400 gp</li>
+            <li>450 gp</li>
+            <li>500 gp</li>
+          </ol>
+        </div>
+
+        <p class="docs-slider-status">
+          Fund:{' '}
+          <span id="docs-slider-budget-status" class="font-mono font-medium text-gray-900">
+            100 gp to 350 gp
+          </span>
+          {' '}
+          <span class="text-gray-500">(step 50 gp)</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Potion potency</h3>
+          <p class="text-sm text-gray-600">
+            Vertical slider for a healing potion strength from 1 (weak) to 10 (legendary).
+          </p>
+        </div>
+
+        <div class="docs-slider">
+          <span id="docs-slider-temp-label" class="docs-slider__label">Potion strength</span>
+
+          <div class="docs-slider-vertical">
+            <cinq-slider
+              id="docs-slider-temp"
+              class="docs-slider-rail docs-slider-rail--compact docs-slider-rail--vertical"
+              data-step="1"
+              data-page="2"
+            >
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-labelledby="docs-slider-temp-label"
+                aria-orientation="vertical"
+                aria-valuemin="1"
+                aria-valuemax="10"
+                aria-valuenow="5"
+                aria-valuetext="Potency 5 out of 10"
+              ></button>
+            </cinq-slider>
+
+            <ol class="docs-slider-vertical-ticks" aria-hidden="true">
+              <li>1</li>
+              <li>3</li>
+              <li>5</li>
+              <li>7</li>
+              <li>10</li>
+            </ol>
+          </div>
+        </div>
+
+        <p class="docs-slider-status">
+          <code>aria-valuetext</code>:{' '}
+          <span id="docs-slider-temp-status" class="font-mono font-medium text-gray-900">
+            Potency 5 out of 10
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">HP comfort band</h3>
+          <p class="text-sm text-gray-600">
+            Vertical range for hit points you want to keep between rests. High values at the top
+            (<code>aria-valuemax</code>), low at the bottom. Tick labels follow the same order.
+          </p>
+        </div>
+
+        <div class="docs-slider docs-slider--compact">
+          <span id="docs-slider-temp-range-label" class="docs-slider__label">
+            Target HP band
+          </span>
+
+          <div class="docs-slider-vertical">
+            <cinq-slider-range
+              id="docs-slider-temp-range"
+              class="docs-slider-rail docs-slider-rail--compact docs-slider-rail--vertical docs-slider-rail--range"
+              data-step="1"
+              data-page="3"
+              aria-labelledby="docs-slider-temp-range-label"
+            >
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-label="Maximum target HP"
+                aria-orientation="vertical"
+                aria-valuemin="0"
+                aria-valuemax="40"
+                aria-valuenow="26"
+                aria-valuetext="26 hit points"
+              ></button>
+              <button
+                type="button"
+                role="slider"
+                tabindex="0"
+                aria-label="Minimum target HP"
+                aria-orientation="vertical"
+                aria-valuemin="0"
+                aria-valuemax="40"
+                aria-valuenow="18"
+                aria-valuetext="18 hit points"
+              ></button>
+            </cinq-slider-range>
+
+            <ol class="docs-slider-vertical-ticks" aria-hidden="true">
+              <li>0 HP</li>
+              <li>20 HP</li>
+              <li>30 HP</li>
+              <li>40 HP</li>
+            </ol>
+          </div>
+        </div>
+
+        <p class="docs-slider-status">
+          Band:{' '}
+          <span id="docs-slider-temp-range-status" class="font-mono font-medium text-gray-900">
+            18 HP to 26 HP
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow" dir="rtl">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Underdark torch</h3>
+          <p class="text-sm text-gray-600">
+            Horizontal slider with <code>dir="rtl"</code>. Pointer and arrow keys mirror on the
+            rail.
+          </p>
+        </div>
+
+        <div class="docs-slider">
+          <div class="docs-slider__header">
+            <label id="docs-slider-rtl-label" class="docs-slider__label">
+              Torch brightness
+            </label>
+            <span id="docs-slider-rtl-value" class="docs-slider__value" aria-hidden="true">
+              60%
+            </span>
+          </div>
+
+          <cinq-slider
+            id="docs-slider-rtl"
+            dir="rtl"
+            class="docs-slider-rail docs-slider-rail--compact"
+          >
+            <button
+              type="button"
+              role="slider"
+              tabindex="0"
+              aria-labelledby="docs-slider-rtl-label"
+              aria-orientation="horizontal"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="60"
+              aria-valuetext="60%"
+            ></button>
+          </cinq-slider>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-2xl bg-white p-6 shadow">
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Encounter builder (advanced)</h3>
+          <p class="text-sm text-gray-600">
+            Presets via <code>setValues(..., &#123; emit: false &#125;)</code>, last moved thumb from
+            <code>event.detail.$thumb</code>, and hidden inputs for form submit.
+          </p>
+        </div>
+
+        <div class="docs-slider-advanced-toolbar">
+          <button
+            type="button"
+            id="docs-slider-advanced-preset-wilderness"
+            class="rounded-lg bg-black px-3 py-2 text-sm text-white hover:bg-gray-800"
+          >
+            Wilderness skirmish
+          </button>
+          <button
+            type="button"
+            id="docs-slider-advanced-preset-dungeon"
+            class="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-800 hover:bg-gray-200"
+          >
+            Dungeon delve
+          </button>
+          <button
+            type="button"
+            id="docs-slider-advanced-preset-epic"
+            class="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-800 hover:bg-gray-200"
+          >
+            Epic showdown
+          </button>
+          <button
+            type="button"
+            id="docs-slider-advanced-reset"
+            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-50"
+          >
+            Reset band
+          </button>
+        </div>
+
+        <div class="docs-slider-advanced-layout">
+          <div class="flex flex-col gap-4">
+            <div class="docs-slider docs-slider--compact">
+              <span id="docs-slider-advanced-label" class="docs-slider__label">
+                Challenge rating band
+              </span>
+
+              <cinq-slider-range
+                id="docs-slider-advanced"
+                class="docs-slider-rail docs-slider-rail--compact docs-slider-rail--range"
+                data-step="1"
+                data-page="5"
+                aria-labelledby="docs-slider-advanced-label"
+              >
+                <button
+                  type="button"
+                  role="slider"
+                  tabindex="0"
+                  aria-label="Maximum CR"
+                  aria-orientation="horizontal"
+                  aria-valuemin="0"
+                  aria-valuemax="30"
+                  aria-valuenow="10"
+                  aria-valuetext="CR 10"
+                ></button>
+                <button
+                  type="button"
+                  role="slider"
+                  tabindex="0"
+                  aria-label="Minimum CR"
+                  aria-orientation="horizontal"
+                  aria-valuemin="0"
+                  aria-valuemax="30"
+                  aria-valuenow="4"
+                  aria-valuetext="CR 4"
+                ></button>
+              </cinq-slider-range>
+
+              <div class="docs-slider-range-labels" aria-hidden="true">
+                <span>CR 0</span>
+                <span>CR 30</span>
+              </div>
+            </div>
+
+            <p class="docs-slider-status">
+              Band:{' '}
+              <span id="docs-slider-advanced-status" class="font-mono font-medium text-gray-900">
+                CR 4 to CR 10
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-600" aria-live="polite">
+              Last moved:{' '}
+              <span
+                id="docs-slider-advanced-active"
+                class="font-mono font-medium text-gray-900"
+              >
+                -
+              </span>
+            </p>
+
+            <pre
+              id="docs-slider-advanced-log"
+              class="docs-slider-advanced-log"
+              aria-live="polite"
+            >Waiting for slider:change…</pre>
+          </div>
+
+          <form id="docs-slider-advanced-form" class="docs-slider-advanced-form">
+            <input type="hidden" name="cr_min" id="docs-slider-advanced-min-input" value="4" />
+            <input type="hidden" name="cr_max" id="docs-slider-advanced-max-input" value="10" />
+
+            <p class="text-sm text-gray-600">
+              Hidden fields stay in sync with the range. Submit to read <code>FormData</code>.
+            </p>
+
+            <button
+              type="submit"
+              class="self-start rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-gray-800"
+            >
+              Save encounter band
+            </button>
+
+            <pre id="docs-slider-advanced-output" class="docs-slider-advanced-output">FormData:
+  cr_min=4
+  cr_max=10</pre>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  import type { Slider, SliderRange } from '@agencecinq/slider';
+  import { EVENTS } from '@agencecinq/utils';
+
+  const formatClock = (totalSeconds: number): string => {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
+
+  const formatDurationText = (totalSeconds: number): string => {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+
+    if (m === 0) {
+      return s === 1 ? '1 second' : `${s} seconds`;
+    }
+
+    if (s === 0) {
+      return m === 1 ? '1 minute' : `${m} minutes`;
+    }
+
+    const minutePart = m === 1 ? '1 minute' : `${m} minutes`;
+    const secondPart = s === 1 ? '1 second' : `${s} seconds`;
+    return `${minutePart} ${secondPart}`;
+  };
+
+  const ratingText = (value: number): string => {
+    if (value === 0) {
+      return 'Rate the encounter from 1 to 10, where 10 is a total party kill';
+    }
+
+    if (value === 1) {
+      return '1, trivial skirmish';
+    }
+
+    if (value === 10) {
+      return '10, total party kill';
+    }
+
+    return `${value} out of 10`;
+  };
+
+  const colorPreview = document.getElementById('docs-slider-color-preview');
+  const colorHex = document.getElementById('docs-slider-color-hex');
+
+  const readChannel = (channel: string): number => {
+    const host = document.getElementById(`docs-slider-color-${channel}`) as Slider | null;
+    return host?.value ?? 0;
+  };
+
+  const syncColorPreview = () => {
+    const r = readChannel('crimson');
+    const g = readChannel('verdant');
+    const b = readChannel('azure');
+    const hex = `#${[r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
+
+    if (colorPreview) {
+      colorPreview.style.backgroundColor = `rgb(${r} ${g} ${b})`;
+    }
+
+    if (colorHex) {
+      colorHex.textContent = hex;
+    }
+  };
+
+  (['crimson', 'verdant', 'azure'] as const).forEach((channel) => {
+    const host = document.getElementById(`docs-slider-color-${channel}`) as Slider | null;
+    const valueEl = document.getElementById(`docs-slider-color-${channel}-value`);
+
+    if (!host) return;
+
+    host.formatValue = (value) => String(value);
+
+    host.addEventListener(EVENTS.SLIDER_CHANGE, (event) => {
+      const { min } = (event as CustomEvent<{ min: number; max: number }>).detail;
+      if (valueEl) valueEl.textContent = String(min);
+      syncColorPreview();
+    });
+  });
+
+  syncColorPreview();
+
+  const ratingHost = document.getElementById('docs-slider-rating') as Slider | null;
+  const ratingStatus = document.getElementById('docs-slider-rating-status');
+
+  if (ratingHost && ratingStatus) {
+    ratingHost.formatValue = ratingText;
+
+    const syncRating = () => {
+      ratingStatus.textContent =
+        ratingHost.$thumb?.getAttribute('aria-valuetext') ?? '';
+    };
+
+    ratingHost.addEventListener(EVENTS.SLIDER_CHANGE, syncRating);
+    syncRating();
+  }
+
+  const seekHost = document.getElementById('docs-slider-seek') as Slider | null;
+  const seekStatus = document.getElementById('docs-slider-seek-status');
+  const seekClock = seekHost?.$thumb?.querySelector('[data-seek-value]');
+
+  if (seekHost && seekStatus) {
+    seekHost.formatValue = formatDurationText;
+
+    const syncSeek = () => {
+      const value = seekHost.value;
+      seekStatus.textContent =
+        seekHost.$thumb?.getAttribute('aria-valuetext') ?? '';
+      if (seekClock instanceof HTMLElement) {
+        seekClock.textContent = formatClock(value);
+      }
+    };
+
+    seekHost.addEventListener(EVENTS.SLIDER_CHANGE, syncSeek);
+    syncSeek();
+  }
+
+  const rtl = document.getElementById('docs-slider-rtl');
+  const rtlValue = document.getElementById('docs-slider-rtl-value');
+
+  rtl?.addEventListener(EVENTS.SLIDER_CHANGE, (event) => {
+    const { min } = (event as CustomEvent<{ min: number; max: number }>).detail;
+    if (rtlValue) rtlValue.textContent = `${min}%`;
+  });
+
+  const priceHost = document.getElementById('docs-slider-price') as SliderRange | null;
+  const priceStatus = document.getElementById('docs-slider-price-status');
+
+  if (priceHost && priceStatus) {
+    priceHost.formatValue = (value) => `${value} gp`;
+
+    const syncPrice = () => {
+      priceStatus.textContent = `${priceHost.min} gp to ${priceHost.max} gp`;
+    };
+
+    priceHost.addEventListener(EVENTS.SLIDER_CHANGE, syncPrice);
+    syncPrice();
+  }
+
+  const PARTY_TOTAL = 1000;
+
+  const partyPaladin = document.getElementById(
+    'docs-slider-party-paladin',
+  ) as Slider | null;
+  const partyCleric = document.getElementById(
+    'docs-slider-party-cleric',
+  ) as Slider | null;
+  const partyRogue = document.getElementById('docs-slider-party-rogue') as Slider | null;
+  const partyStatus = document.getElementById('docs-slider-party-status');
+  const partyPaladinValue = document.getElementById('docs-slider-party-paladin-value');
+  const partyClericValue = document.getElementById('docs-slider-party-cleric-value');
+  const partyRogueValue = document.getElementById('docs-slider-party-rogue-value');
+
+  if (
+    partyPaladin &&
+    partyCleric &&
+    partyRogue &&
+    partyStatus &&
+    partyPaladinValue &&
+    partyClericValue &&
+    partyRogueValue
+  ) {
+    const formatGp = (value: number) => `${value} gp`;
+
+    partyPaladin.formatValue = formatGp;
+    partyCleric.formatValue = formatGp;
+    partyRogue.formatValue = formatGp;
+
+    const shares = { paladin: 300, cleric: 350, rogue: 350 };
+
+    type PartyMember = keyof typeof shares;
+
+    const takeOrder: Record<PartyMember, PartyMember[]> = {
+      paladin: ['rogue', 'cleric'],
+      cleric: ['rogue', 'paladin'],
+      rogue: ['cleric', 'paladin'],
+    };
+
+    const hosts: Record<PartyMember, Slider> = {
+      paladin: partyPaladin,
+      cleric: partyCleric,
+      rogue: partyRogue,
+    };
+
+    const setShare = (who: PartyMember, next: number) => {
+      next = Math.max(0, Math.min(PARTY_TOTAL, next));
+      const delta = next - shares[who];
+
+      shares[who] = next;
+
+      if (delta === 0) {
+        return;
+      }
+
+      if (delta > 0) {
+        let remaining = delta;
+
+        for (const other of takeOrder[who]) {
+          const take = Math.min(remaining, shares[other]);
+          shares[other] -= take;
+          remaining -= take;
+
+          if (remaining === 0) {
+            break;
+          }
+        }
+
+        if (remaining > 0) {
+          shares[who] -= remaining;
+        }
+      } else {
+        shares.rogue += -delta;
+      }
+
+      const overflow =
+        shares.paladin + shares.cleric + shares.rogue - PARTY_TOTAL;
+
+      if (overflow > 0) {
+        shares.rogue = Math.max(0, shares.rogue - overflow);
+      }
+
+      const under =
+        PARTY_TOTAL - shares.paladin - shares.cleric - shares.rogue;
+
+      if (under > 0) {
+        shares.rogue += under;
+      }
+    };
+
+    const syncPartySplit = () => {
+      for (const member of ['paladin', 'cleric', 'rogue'] as const) {
+        hosts[member].setValue(shares[member], { emit: false });
+      }
+
+      partyPaladinValue.textContent = String(shares.paladin);
+      partyClericValue.textContent = String(shares.cleric);
+      partyRogueValue.textContent = String(shares.rogue);
+
+      partyStatus.textContent = `${shares.paladin} + ${shares.cleric} + ${shares.rogue} = ${PARTY_TOTAL} gp`;
+    };
+
+    for (const member of ['paladin', 'cleric', 'rogue'] as const) {
+      hosts[member].addEventListener(EVENTS.SLIDER_CHANGE, (event) => {
+        const { min } = (event as CustomEvent<{ min: number }>).detail;
+        setShare(member, min);
+        syncPartySplit();
+      });
+    }
+
+    syncPartySplit();
+  }
+
+  const budgetHost = document.getElementById('docs-slider-budget') as SliderRange | null;
+  const budgetStatus = document.getElementById('docs-slider-budget-status');
+
+  if (budgetHost && budgetStatus) {
+    budgetHost.formatValue = (value) => `${value} gp`;
+
+    const syncBudget = () => {
+      budgetStatus.textContent = `${budgetHost.min} gp to ${budgetHost.max} gp`;
+    };
+
+    budgetHost.addEventListener(EVENTS.SLIDER_CHANGE, syncBudget);
+    syncBudget();
+  }
+
+  const tempHost = document.getElementById('docs-slider-temp') as Slider | null;
+  const tempStatus = document.getElementById('docs-slider-temp-status');
+
+  if (tempHost && tempStatus) {
+    tempHost.formatValue = (value) => `Potency ${value} out of 10`;
+
+    const syncTemp = () => {
+      tempStatus.textContent =
+        tempHost.$thumb?.getAttribute('aria-valuetext') ?? '';
+    };
+
+    tempHost.addEventListener(EVENTS.SLIDER_CHANGE, syncTemp);
+    syncTemp();
+  }
+
+  const tempRangeHost = document.getElementById(
+    'docs-slider-temp-range',
+  ) as SliderRange | null;
+  const tempRangeStatus = document.getElementById('docs-slider-temp-range-status');
+
+  if (tempRangeHost && tempRangeStatus) {
+    tempRangeHost.formatValue = (value) =>
+      value === 1 ? '1 hit point' : `${value} hit points`;
+
+    const syncTempRange = () => {
+      tempRangeStatus.textContent = `${tempRangeHost.min} HP to ${tempRangeHost.max} HP`;
+    };
+
+    tempRangeHost.addEventListener(EVENTS.SLIDER_CHANGE, syncTempRange);
+    syncTempRange();
+  }
+
+  const advancedHost = document.getElementById(
+    'docs-slider-advanced',
+  ) as SliderRange | null;
+  const advancedStatus = document.getElementById('docs-slider-advanced-status');
+  const advancedActive = document.getElementById('docs-slider-advanced-active');
+  const advancedLog = document.getElementById('docs-slider-advanced-log');
+  const advancedForm = document.getElementById(
+    'docs-slider-advanced-form',
+  ) as HTMLFormElement | null;
+  const advancedOutput = document.getElementById('docs-slider-advanced-output');
+  const advancedMinInput = document.getElementById(
+    'docs-slider-advanced-min-input',
+  ) as HTMLInputElement | null;
+  const advancedMaxInput = document.getElementById(
+    'docs-slider-advanced-max-input',
+  ) as HTMLInputElement | null;
+  const advancedPresetWilderness = document.getElementById(
+    'docs-slider-advanced-preset-wilderness',
+  );
+  const advancedPresetDungeon = document.getElementById(
+    'docs-slider-advanced-preset-dungeon',
+  );
+  const advancedPresetEpic = document.getElementById('docs-slider-advanced-preset-epic');
+  const advancedReset = document.getElementById('docs-slider-advanced-reset');
+
+  if (
+    advancedHost &&
+    advancedStatus &&
+    advancedActive &&
+    advancedLog &&
+    advancedForm &&
+    advancedOutput &&
+    advancedMinInput &&
+    advancedMaxInput
+  ) {
+    const logLines: string[] = [];
+    const defaultBand = { min: 4, max: 10 };
+
+    advancedHost.formatValue = (value) => `CR ${value}`;
+
+    const formatBand = (min: number, max: number) => `CR ${min} to CR ${max}`;
+
+    const thumbLabel = ($thumb: HTMLElement) => {
+      if ($thumb === advancedHost.$min) return 'min';
+      if ($thumb === advancedHost.$max) return 'max';
+      return 'unknown';
+    };
+
+    const appendLog = (line: string) => {
+      logLines.unshift(line);
+      if (5 < logLines.length) logLines.length = 5;
+      advancedLog.textContent = logLines.join('\n');
+    };
+
+    const syncHiddenInputs = () => {
+      advancedMinInput.value = String(advancedHost.min);
+      advancedMaxInput.value = String(advancedHost.max);
+    };
+
+    const formatFormData = () => {
+      const data = new FormData(advancedForm);
+      const lines = ['FormData:'];
+      data.forEach((value, key) => {
+        lines.push(`  ${key}=${value}`);
+      });
+      return lines.join('\n');
+    };
+
+    const writeOutput = (message: string) => {
+      advancedOutput.textContent = `${message}\n\n${formatFormData()}`;
+    };
+
+    const syncBandDisplay = () => {
+      advancedStatus.textContent = formatBand(advancedHost.min, advancedHost.max);
+      syncHiddenInputs();
+    };
+
+    const applyPreset = (min: number, max: number, label: string) => {
+      advancedHost.setValues(min, max, { active: 'min', emit: false });
+      syncBandDisplay();
+      appendLog(`preset "${label}" via setValues(..., { emit: false })`);
+      writeOutput(`Preset loaded: ${label}. No slider:change fired.`);
+    };
+
+    advancedHost.addEventListener(EVENTS.SLIDER_CHANGE, (event) => {
+      const { min, max, $thumb } = (
+        event as CustomEvent<{ min: number; max: number; $thumb: HTMLElement }>
+      ).detail;
+      const which = thumbLabel($thumb);
+
+      advancedActive.textContent = `${which} thumb (${formatBand(min, max)})`;
+      appendLog(`slider:change — ${which} → CR ${min}–${max}`);
+      syncBandDisplay();
+    });
+
+    advancedPresetWilderness?.addEventListener('click', () => {
+      applyPreset(0, 3, 'Wilderness skirmish');
+    });
+
+    advancedPresetDungeon?.addEventListener('click', () => {
+      applyPreset(4, 10, 'Dungeon delve');
+    });
+
+    advancedPresetEpic?.addEventListener('click', () => {
+      applyPreset(15, 20, 'Epic showdown');
+    });
+
+    advancedReset?.addEventListener('click', () => {
+      advancedHost.setValues(defaultBand.min, defaultBand.max, {
+        active: 'min',
+        emit: true,
+      });
+      writeOutput('Band reset to defaults.');
+    });
+
+    advancedForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      syncHiddenInputs();
+      writeOutput('Form submitted with current hidden fields.');
+    });
+
+    syncBandDisplay();
+    writeOutput('Adjust the band or load a preset.');
+  }
+</script>
