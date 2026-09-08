@@ -1,5 +1,12 @@
 # @agencecinq/spinbutton
 
+## 4.0.0
+
+### Major Changes
+
+- Align change event with `@agencecinq/utils` 7.x: `spinbutton:change` (replaces `spinbutton-change`).
+- Stop inlining `EVENTS` in the bundle. Import `@agencecinq/utils` at runtime (`peerDependencies` >= 7.0.0).
+
 ## 3.0.0
 
 ### Major Changes

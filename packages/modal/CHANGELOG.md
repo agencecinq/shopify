@@ -1,5 +1,12 @@
 # @agencecinq/modal
 
+## 4.0.0
+
+### Major Changes
+
+- Align modal events with `@agencecinq/utils` 7.x: `modal:open`, `modal:close`, `modal:toggle`, `modal:before-open`, `modal:before-close` (replaces `modal-open`, etc.).
+- Stop inlining `EVENTS` in the bundle. Import `@agencecinq/utils` at runtime (`peerDependencies` >= 7.0.0).
+
 ## 3.1.0
 
 ### Minor Changes

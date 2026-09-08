@@ -1,6 +1,6 @@
 {
   "name": "@agencecinq/drawer",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -25,7 +25,7 @@
     "dev": "vite build --watch"
   },
   "peerDependencies": {
-    "@agencecinq/utils": "*"
+    "@agencecinq/utils": ">=7.0.0"
   },
   "repository": {
     "type": "git",

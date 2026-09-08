@@ -1,5 +1,12 @@
 # @agencecinq/drawer
 
+## 7.0.0
+
+### Major Changes
+
+- Align drawer events with `@agencecinq/utils` 7.x: `drawer:open`, `drawer:close`, `drawer:toggle`, `drawer:before-open`, `drawer:before-close` (replaces `drawer-open`, etc.).
+- Stop inlining `EVENTS` in the bundle. Import `@agencecinq/utils` at runtime (`peerDependencies` >= 7.0.0).
+
 ## 6.1.0
 
 ### Minor Changes

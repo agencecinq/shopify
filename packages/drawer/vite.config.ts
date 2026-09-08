@@ -14,6 +14,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@agencecinq/utils',
         'vite',
         'fs-extra',
         'node:path',

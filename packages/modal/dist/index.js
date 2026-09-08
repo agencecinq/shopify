@@ -1,74 +1,6 @@
-//#region ../utils/dist/index.js
-var e = {
-	DRAWER_BEFORE_CLOSE: "drawer:before-close",
-	DRAWER_BEFORE_OPEN: "drawer:before-open",
-	DRAWER_CLOSE: "drawer:close",
-	DRAWER_OPEN: "drawer:open",
-	DRAWER_TOGGLE: "drawer:toggle",
-	MODAL_BEFORE_CLOSE: "modal:before-close",
-	MODAL_BEFORE_OPEN: "modal:before-open",
-	MODAL_CLOSE: "modal:close",
-	MODAL_OPEN: "modal:open",
-	MODAL_TOGGLE: "modal:toggle",
-	SPINBUTTON_CHANGE: "spinbutton:change",
-	DISCLOSURE_BUTTON_OPEN: "disclosure-button:open",
-	DISCLOSURE_BUTTON_CLOSE: "disclosure-button:close",
-	SWITCH_ACTIVATE: "switch:activate",
-	SWITCH_DEACTIVATE: "switch:deactivate",
-	ACCORDION_OPEN: "accordion:open",
-	ACCORDION_CLOSE: "accordion:close",
-	COMBOBOX_LOADING: "combobox:loading",
-	COMBOBOX_LOADED: "combobox:loaded",
-	COMBOBOX_UPDATE: "combobox:update",
-	COMBOBOX_SUBMIT: "combobox:submit",
-	COMBOBOX_EMPTY: "combobox:empty",
-	WINDOWSPLITTER_CHANGE: "windowsplitter:change",
-	CALENDAR_CHANGE: "calendar:change",
-	TABS_BEFORE_ACTIVATE: "tabs:before-activate",
-	TABS_ACTIVATE: "tabs:activate",
-	TABS_DELETE: "tabs:delete",
-	CART_BEFORE_ADD: "cart:before-add",
-	CART_BEFORE_UPDATE: "cart:before-update",
-	CART_UPDATE: "cart:update",
-	VARIANT_CHANGE: "variant:change"
-}, t = (e, t, n, r = {}) => {
-	let { bubbles: i = !0, cancelable: a = !0 } = r;
-	return e.dispatchEvent(new CustomEvent(t, {
-		bubbles: i,
-		cancelable: a,
-		detail: n
-	}));
-}, n = (e, t) => {
-	let n = null, r = null, i = () => {
-		r && e(...r), n = null;
-	};
-	return (...e) => {
-		r = e, n ||= setTimeout(i, t);
-	};
-}, r = document.documentElement, { body: i } = document;
-r.hasAttribute("data-debug"), window.addEventListener("pointermove", n(({ x: e, y: t }) => {}, 100), { passive: !0 }), window.matchMedia("(width >= 64rem)"), window.matchMedia("(min-width: 1280px)"), window.matchMedia("(min-width: 1440px)"), window.matchMedia("(min-width: 1920px)");
-function a(e) {
-	return !!(e.offsetWidth || e.offsetHeight || e.getClientRects().length);
-}
-function o(e) {
-	if (!e) return [];
-	let t = [
-		"summary",
-		"a[href]",
-		"button:enabled",
-		"[tabindex]:not([tabindex^=\"-\"])",
-		"input:not([type=hidden]):enabled",
-		"select:enabled",
-		"textarea:enabled",
-		"object",
-		"iframe",
-		"[contenteditable]"
-	].join(",");
-	return Array.from(e.querySelectorAll(t)).filter((e) => a(e) && e.getAttribute("tabindex") !== "-1");
-}
-//#endregion
+import { EVENTS as e, dispatchEvent as t, getFocusableElements as n } from "@agencecinq/utils";
 //#region src/modal.ts
-var s = class extends HTMLElement {
+var r = class extends HTMLElement {
 	trigger = null;
 	$modal = null;
 	#e = (e) => {
@@ -126,9 +58,9 @@ var s = class extends HTMLElement {
 			resolve: n
 		}, { bubbles: !1 }) ? (n(), !0) : !this.hasAttribute("open");
 	}
-	attributeChangedCallback(n, r, i) {
-		if (!(!this.isConnected || n !== "open")) {
-			if (i !== null) {
+	attributeChangedCallback(r, i, a) {
+		if (!(!this.isConnected || r !== "open")) {
+			if (a !== null) {
 				if (this.$modal && !this.$modal.open) {
 					this.$modal.showModal(), t(document.documentElement, e.MODAL_OPEN, {
 						modal: this.id,
@@ -137,8 +69,8 @@ var s = class extends HTMLElement {
 						bubbles: !1,
 						cancelable: !1
 					});
-					let n = o(this.$modal);
-					n.length > 0 && n[0].focus();
+					let r = n(this.$modal);
+					r.length > 0 && r[0].focus();
 				}
 				return;
 			}
@@ -149,10 +81,10 @@ var s = class extends HTMLElement {
 		}
 	}
 };
-customElements.get("cinq-modal") || customElements.define("cinq-modal", s);
+customElements.get("cinq-modal") || customElements.define("cinq-modal", r);
 //#endregion
 //#region src/modal-button.ts
-var c = class extends HTMLElement {
+var i = class extends HTMLElement {
 	$button = null;
 	controls = [];
 	#e = (e) => {
@@ -188,6 +120,6 @@ var c = class extends HTMLElement {
 		});
 	};
 };
-customElements.get("cinq-modal-button") || customElements.define("cinq-modal-button", c);
+customElements.get("cinq-modal-button") || customElements.define("cinq-modal-button", i);
 //#endregion
-export { s as Modal, c as ModalButton };
+export { r as Modal, i as ModalButton };

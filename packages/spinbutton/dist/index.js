@@ -1,65 +1,14 @@
-//#region ../utils/dist/index.js
-var e = {
-	DRAWER_BEFORE_CLOSE: "drawer:before-close",
-	DRAWER_BEFORE_OPEN: "drawer:before-open",
-	DRAWER_CLOSE: "drawer:close",
-	DRAWER_OPEN: "drawer:open",
-	DRAWER_TOGGLE: "drawer:toggle",
-	MODAL_BEFORE_CLOSE: "modal:before-close",
-	MODAL_BEFORE_OPEN: "modal:before-open",
-	MODAL_CLOSE: "modal:close",
-	MODAL_OPEN: "modal:open",
-	MODAL_TOGGLE: "modal:toggle",
-	SPINBUTTON_CHANGE: "spinbutton:change",
-	DISCLOSURE_BUTTON_OPEN: "disclosure-button:open",
-	DISCLOSURE_BUTTON_CLOSE: "disclosure-button:close",
-	SWITCH_ACTIVATE: "switch:activate",
-	SWITCH_DEACTIVATE: "switch:deactivate",
-	ACCORDION_OPEN: "accordion:open",
-	ACCORDION_CLOSE: "accordion:close",
-	COMBOBOX_LOADING: "combobox:loading",
-	COMBOBOX_LOADED: "combobox:loaded",
-	COMBOBOX_UPDATE: "combobox:update",
-	COMBOBOX_SUBMIT: "combobox:submit",
-	COMBOBOX_EMPTY: "combobox:empty",
-	WINDOWSPLITTER_CHANGE: "windowsplitter:change",
-	CALENDAR_CHANGE: "calendar:change",
-	TABS_BEFORE_ACTIVATE: "tabs:before-activate",
-	TABS_ACTIVATE: "tabs:activate",
-	TABS_DELETE: "tabs:delete",
-	CART_BEFORE_ADD: "cart:before-add",
-	CART_BEFORE_UPDATE: "cart:before-update",
-	CART_UPDATE: "cart:update",
-	VARIANT_CHANGE: "variant:change"
-}, t = (e, t, n, r = {}) => {
-	let { bubbles: i = !0, cancelable: a = !0 } = r;
-	return e.dispatchEvent(new CustomEvent(t, {
-		bubbles: i,
-		cancelable: a,
-		detail: n
-	}));
-}, n = (e, t) => {
-	if (e == null || e === "") return t;
-	let n = Number(e);
-	return Number.isFinite(n) ? n : t;
-}, r = (e, t) => {
-	let n = null, r = null, i = () => {
-		r && e(...r), n = null;
-	};
-	return (...e) => {
-		r = e, n ||= setTimeout(i, t);
-	};
-}, i = document.documentElement, { body: a } = document;
-i.hasAttribute("data-debug"), window.addEventListener("pointermove", r(({ x: e, y: t }) => {}, 100), { passive: !0 }), window.matchMedia("(width >= 64rem)"), window.matchMedia("(min-width: 1280px)"), window.matchMedia("(min-width: 1440px)"), window.matchMedia("(min-width: 1920px)");
-var o = (e, t, n) => Math.min(Math.max(e, t), n), s = {
+import { EVENTS as e, clamp as t, dispatchEvent as n, parseNumber as r, throttle as i } from "@agencecinq/utils";
+//#region src/spinbutton.ts
+var a = {
 	step: 1,
 	delay: 100
-}, c = class extends HTMLElement {
+}, o = class extends HTMLElement {
 	$input = null;
 	$increase = null;
 	$decrease = null;
 	$live = null;
-	options = { ...s };
+	options = { ...a };
 	value = {
 		min: !1,
 		max: !1,
@@ -83,20 +32,20 @@ var o = (e, t, n) => Math.min(Math.max(e, t), n), s = {
 	}
 	init() {
 		if (this.$input = this.querySelector("input"), !this.$input) throw Error("Spinbutton must have an input element");
-		this.$increase = this.querySelector("button[name=\"increase\"]"), this.$decrease = this.querySelector("button[name=\"decrease\"]"), this.$live = this.querySelector("[aria-live]"), this.options.step = n(this.getAttribute("data-step"), s.step), this.options.delay = n(this.getAttribute("data-delay"), s.delay);
-		let i = this.$input.getAttribute("aria-valuemin"), a = this.$input.getAttribute("aria-valuemax"), o = n(this.$input.getAttribute("aria-valuenow"), 0);
+		this.$increase = this.querySelector("button[name=\"increase\"]"), this.$decrease = this.querySelector("button[name=\"decrease\"]"), this.$live = this.querySelector("[aria-live]"), this.options.step = r(this.getAttribute("data-step"), a.step), this.options.delay = r(this.getAttribute("data-delay"), a.delay);
+		let t = this.$input.getAttribute("aria-valuemin"), o = this.$input.getAttribute("aria-valuemax"), s = r(this.$input.getAttribute("aria-valuenow"), 0);
 		this.value = {
-			min: i !== null && n(i, 0),
-			max: a !== null && n(a, 0),
-			now: o
-		}, this.$input.addEventListener("keydown", this.#r), this.$input.addEventListener("change", this.#n), this.$increase?.addEventListener("click", this.increase), this.$decrease?.addEventListener("click", this.decrease), this.#t = r(() => {
-			t(this, e.SPINBUTTON_CHANGE, { value: this.value.now });
+			min: t !== null && r(t, 0),
+			max: o !== null && r(o, 0),
+			now: s
+		}, this.$input.addEventListener("keydown", this.#r), this.$input.addEventListener("change", this.#n), this.$increase?.addEventListener("click", this.increase), this.$decrease?.addEventListener("click", this.decrease), this.#t = i(() => {
+			n(this, e.SPINBUTTON_CHANGE, { value: this.value.now });
 		}, this.options.delay);
 	}
 	#n = ({ target: e }) => {
 		if (!(e instanceof HTMLInputElement)) return;
 		let { value: t } = e;
-		this.setValue(n(t, this.value.now));
+		this.setValue(r(t, this.value.now));
 	};
 	#r = (e) => {
 		let { step: t } = this.options, n = {
@@ -121,19 +70,19 @@ var o = (e, t, n) => Math.min(Math.max(e, t), n), s = {
 	setMax(e, t = !0) {
 		this.value.max = e, this.$input?.setAttribute("aria-valuemax", e.toString()), this.setValue(this.value.now, t);
 	}
-	setValue(e, t = !0) {
+	setValue(e, n = !0) {
 		if (!this.$input) return;
-		let n = this.value.min === !1 ? -(2 ** 53 - 1) : this.value.min, r = this.value.max === !1 ? 2 ** 53 - 1 : this.value.max;
-		if (e < n || e > r ? this.$input.setAttribute("aria-invalid", "true") : this.$input.removeAttribute("aria-invalid"), this.value.now = o(e, n, r), this.$increase?.toggleAttribute("disabled", this.value.max !== !1 && this.value.now === this.value.max), this.$decrease?.toggleAttribute("disabled", this.value.min !== !1 && this.value.min === this.value.now), this.$input.setAttribute("aria-valuenow", this.value.now.toString()), this.$input.value = this.value.now.toString(), this.$input.setAttribute("value", this.value.now.toString()), this.#e) {
+		let r = this.value.min === !1 ? -(2 ** 53 - 1) : this.value.min, i = this.value.max === !1 ? 2 ** 53 - 1 : this.value.max;
+		if (e < r || e > i ? this.$input.setAttribute("aria-invalid", "true") : this.$input.removeAttribute("aria-invalid"), this.value.now = t(e, r, i), this.$increase?.toggleAttribute("disabled", this.value.max !== !1 && this.value.now === this.value.max), this.$decrease?.toggleAttribute("disabled", this.value.min !== !1 && this.value.min === this.value.now), this.$input.setAttribute("aria-valuenow", this.value.now.toString()), this.$input.value = this.value.now.toString(), this.$input.setAttribute("value", this.value.now.toString()), this.#e) {
 			let e = this.#e(this.value.now);
 			this.$input.setAttribute("aria-valuetext", e), this.$live && (this.$live.textContent = e);
 		}
-		t && this.#t();
+		n && this.#t();
 	}
 	destroy() {
 		this.$input?.removeEventListener("keydown", this.#r), this.$input?.removeEventListener("change", this.#n), this.$increase?.removeEventListener("click", this.increase), this.$decrease?.removeEventListener("click", this.decrease), this.#t = () => {};
 	}
 };
-customElements.get("cinq-spinbutton") || customElements.define("cinq-spinbutton", c);
+customElements.get("cinq-spinbutton") || customElements.define("cinq-spinbutton", o);
 //#endregion
-export { c as Spinbutton };
+export { o as Spinbutton };
