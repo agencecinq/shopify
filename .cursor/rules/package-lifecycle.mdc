@@ -1,0 +1,55 @@
+---
+description: CINQ UI Web Component host lifecycle — public init/destroy bind-unbind pair
+globs: packages/*/src/**/*.ts
+alwaysApply: false
+---
+
+# Package host lifecycle: `init` / `destroy`
+
+Every package **host** custom element (`extends HTMLElement`) must expose a public bind/unbind API so apps can destroy and rebuild behaviour from outside (e.g. after mutating light DOM).
+
+## Required shape
+
+```ts
+class Host extends HTMLElement {
+  connectedCallback(): void {
+    this.init();
+  }
+
+  disconnectedCallback(): void {
+    this.destroy();
+  }
+
+  /** Bind markup + listeners. Does not call `destroy()`. */
+  init(): void {
+    // …
+  }
+
+  /** Unbind. Safe to call externally while the node stays in the document. */
+  destroy(): void {
+    // remove listeners, observers, child controllers…
+  }
+}
+```
+
+## Rules
+
+- `connectedCallback` → `init()`; `disconnectedCallback` → `destroy()`.
+- `init()` must **not** call `destroy()`. Binding and unbinding stay separate.
+- The app (or docs demo) is responsible for calling `destroy()` before a re-`init()` when already bound.
+- `destroy()` / `init()` stay **public** — not only for connect/disconnect.
+- Prefer storing listener references (or bound methods) so `destroy()` can remove them; avoid anonymous `addEventListener` callbacks that cannot be detached.
+- Child controllers (Panel, Tab, …) follow the same `init` / `destroy` pair when they own listeners.
+- Document the runtime pattern in the package README when DOM mutation is expected:
+
+```js
+el.destroy();
+// mutate light DOM…
+el.init();
+```
+
+## Do not
+
+- Call `destroy()` from inside `init()`.
+- Rely only on `disconnectedCallback` for teardown when the host stays mounted.
+- Hide `destroy` as private / `#destroy` — consumers need it.

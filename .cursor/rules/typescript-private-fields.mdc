@@ -1,0 +1,49 @@
+---
+description: Use ECMAScript # private fields/methods on CINQ Web Component hosts (not TS private or _prefix)
+globs: packages/*/src/**/*.ts
+alwaysApply: false
+---
+
+# TypeScript encapsulation: `#` private members
+
+CINQ UI ships **Web Components** consumed as DOM nodes. Internal state must not be reachable on the instance at runtime.
+
+## Use `#` (ES2022 private class members)
+
+- **Fields** (`#dispatchChange`, `#formatValue`) and **methods** (`#applyValueText()`, `#handleKeydown`) that are implementation details.
+- Vanilla JS — enforced by the engine, not erased at compile time like TypeScript `private`.
+- TypeScript still type-checks `#` members.
+
+See also `.cursor/rules/typescript-style.mdc` (destructuring preferences).
+
+```ts
+class Spinbutton extends HTMLElement {
+  #dispatchChange: () => void = () => {};
+
+  #handleKeydown = (event: KeyboardEvent): void => {
+    // …
+  };
+
+  init(): void {
+    this.$input?.addEventListener("keydown", this.#handleKeydown);
+  }
+
+  destroy(): void {
+    this.$input?.removeEventListener("keydown", this.#handleKeydown);
+  }
+}
+```
+
+## Do not
+
+- `private _foo` — redundant (`private` already marks intent; `_` adds noise).
+- `private foo` on **fields** that must stay hidden from `element.foo` introspection — it compiles to a public property.
+- `#init()` / `#destroy()` — these stay **public** (see `package-lifecycle.mdc`).
+
+## Public surface
+
+Keep documented API public: `init()`, `destroy()`, `$input`, `$overlay`, `$panel`, `setValue()`, `formatValue` getter/setter, etc.
+
+The `$` prefix marks **public** cached DOM references on the host. Do not rename them to `#$foo` when migrating to `#` — only truly internal state uses `#`.
+
+When a public property needs a private backing store, use `#` + getter/setter (e.g. `#formatValue` + `formatValue`).

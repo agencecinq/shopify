@@ -1,0 +1,17 @@
+---
+description: CINQ UI copy style — no quadratins or semicolons in user-facing prose
+globs: apps/docs/**/*.{mdx,astro}, packages/**/README.md
+alwaysApply: true
+---
+
+# Copy style
+
+In user-facing copy (docs, README prose, playground descriptions, commit messages for this repo):
+
+- No **quadratins**: em dash (`—`), en dash (`–`), arrows (`→` `←` `↑` `↓`), middle dot (`·`), ellipsis (`…`)
+- No **semicolons** in prose sentences
+- Prefer: `.`, `,`, ` to `, `...`, a plain ASCII hyphen when a dash is needed in code-like text
+
+Code identifiers, comments, and internal SPEC tables are lower priority, but new copy should follow the same rule.
+
+Docs playgrounds use **AD&D** themed demo copy unless a component needs neutral examples.

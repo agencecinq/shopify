@@ -1,0 +1,51 @@
+---
+description: TypeScript style for CINQ UI package source
+globs: packages/*/src/**/*.ts
+alwaysApply: false
+---
+
+# TypeScript style
+
+## DOM references
+
+Prefix **variables and parameters** that hold a DOM element with `$` (same as
+cached host properties: `$thumb`, `$input`, `$panel`).
+
+```ts
+const $thumb = event.currentTarget as HTMLElement;
+protected bindThumb($thumb: HTMLElement): void { ... }
+```
+
+`thumbSize`, `trackLength`, and other non-element values stay unprefixed.
+
+## Destructuring
+
+Prefer **destructuring** when several fields from the same object are used:
+
+- Events: `const { key, clientX, clientY, pointerId } = event`
+- DOM rects: `const { top, left, width, height } = el.getBoundingClientRect()`
+- Options: `const { emit = true, active = this.#active } = options`
+- State: `const { id, $thumb } = this.#drag` before use
+
+Match existing package patterns (e.g. spinbutton `#handleChange = ({ target }: Event)`).
+
+Do not destructure when it hides intent (single `event.key` in an early guard, or a one-off property read).
+
+## Branching
+
+Prefer **separate `if` blocks** over `if/else` when each branch stands on its
+own. Avoid multi-line ternaries for the same cases.
+
+When one branch is the common case, assign it as the **default value**, then
+guard only the exception:
+
+```ts
+let offset = left + width / 2 - clientX;
+
+if (this.isVertical) {
+  offset = top + height / 2 - clientY;
+}
+```
+
+Use `if/else` only when the branches are tightly coupled or the negative case
+would read awkwardly as a second guard.
