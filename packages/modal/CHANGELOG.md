@@ -1,5 +1,12 @@
 # @agencecinq/modal
 
+## 4.0.1
+
+### Patch Changes
+
+- Remove unused `fs-extra` dependency.
+- Add `engines.node` >= 18.
+
 ## 4.0.0
 
 ### Major Changes

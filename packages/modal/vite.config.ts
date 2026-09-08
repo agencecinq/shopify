@@ -12,24 +12,7 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.js`
     },
     rollupOptions: {
-      external: [
-        '@agencecinq/utils',
-        'vite',
-        'fs-extra',
-        'node:path',
-        'node:url',
-        'node:fs',
-        'path',
-        'url',
-        'fs'
-      ],
-      output: {
-        globals: {
-          vite: 'Vite',
-          'fs-extra': 'fsExtra',
-          path: 'path'
-        }
-      }
+      external: ['@agencecinq/utils'],
     },
   },
   plugins: [

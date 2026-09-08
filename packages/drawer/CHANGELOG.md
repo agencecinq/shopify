@@ -1,5 +1,12 @@
 # @agencecinq/drawer
 
+## 7.0.1
+
+### Patch Changes
+
+- Drop `fs-extra`. The Vite plugin uses `node:fs/promises` (`fs.cp`, Node 18+).
+- Add `engines.node` >= 18. Document Node requirement for the Shopify plugin.
+
 ## 7.0.0
 
 ### Major Changes

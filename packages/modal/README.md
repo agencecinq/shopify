@@ -11,6 +11,8 @@ with `cinq-modal-button` through document-level events.
 
 ## Installation
 
+Requires **Node.js 18+** (build tooling).
+
 ```bash
 pnpm add @agencecinq/modal
 ```

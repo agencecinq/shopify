@@ -11,6 +11,8 @@ Includes a Vite plugin to sync Liquid snippets in Shopify projects.
 
 ## Installation
 
+Requires **Node.js 18+** (build tooling and `@agencecinq/drawer/plugin`).
+
 ```bash
 pnpm add @agencecinq/drawer
 ```
@@ -45,6 +47,8 @@ No manual `init()` call required.
 > invalid markup.
 
 ### Shopify integration
+
+Requires **Node.js 18+** (the plugin uses `fs.cp` from `node:fs/promises`).
 
 Register the Vite plugin in your Shopify project. It copies the
 `cinq-drawer.html.liquid` snippet to your theme during development and build:

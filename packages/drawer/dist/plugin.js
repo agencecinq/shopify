@@ -1,26 +1,33 @@
-import e from "fs-extra";
-import { dirname as t, resolve as n } from "node:path";
-import { fileURLToPath as r } from "node:url";
+import { access as e, cp as t, mkdir as n } from "node:fs/promises";
+import { dirname as r, resolve as i } from "node:path";
+import { fileURLToPath as a } from "node:url";
 //#region src/plugin.ts
-var i = r(import.meta.url), a = t(i);
-function o() {
+var o = a(import.meta.url), s = r(o);
+async function c(t) {
+	try {
+		return await e(t), !0;
+	} catch {
+		return !1;
+	}
+}
+function l() {
 	return {
 		name: "vite-plugin-cinq-drawer",
 		async buildStart() {
-			let r = n(a, "../src/drawer.html.liquid"), i = n(process.cwd(), "snippets/cinq-drawer.html.liquid");
+			let e = i(s, "../src/drawer.html.liquid"), a = i(process.cwd(), "snippets/cinq-drawer.html.liquid");
 			try {
-				await e.pathExists(r) && (await e.ensureDir(t(i)), await e.copy(r, i), console.log("✅ CINQ : Liquid snippet copied."));
+				await c(e) && (await n(r(a), { recursive: !0 }), await t(e, a), console.log("✅ CINQ : Liquid snippet copied."));
 			} catch (e) {
 				console.error("❌ CINQ : Copying error :", e);
 			}
 		},
-		async handleHotUpdate({ file: t, server: r }) {
-			if (t.endsWith("drawer.html.liquid")) {
-				let i = n(process.cwd(), "snippets/cinq-drawer.html.liquid");
-				await e.copy(t, i), r.ws.send({ type: "full-reload" });
+		async handleHotUpdate({ file: e, server: n }) {
+			if (e.endsWith("drawer.html.liquid")) {
+				let r = i(process.cwd(), "snippets/cinq-drawer.html.liquid");
+				await t(e, r), n.ws.send({ type: "full-reload" });
 			}
 		}
 	};
 }
 //#endregion
-export { o as cinqDrawerPlugin };
+export { l as cinqDrawerPlugin };

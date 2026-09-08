@@ -16,21 +16,10 @@ export default defineConfig({
       external: [
         '@agencecinq/utils',
         'vite',
-        'fs-extra',
         'node:path',
         'node:url',
-        'node:fs',
-        'path',
-        'url',
-        'fs'
+        'node:fs/promises',
       ],
-      output: {
-        globals: {
-          vite: 'Vite',
-          'fs-extra': 'fsExtra',
-          path: 'path'
-        }
-      }
     },
   },
   plugins: [
